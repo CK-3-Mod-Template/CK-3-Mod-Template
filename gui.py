@@ -266,6 +266,9 @@ class SteamModCreator:
 
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
+        # If no tags selected, use a default tag
+        if not selected_tags:
+            selected_tags = ["Fixes"]
 
         # Get the supported version from the entry
         supported_version = self.supported_version_entry.get().strip()
@@ -304,6 +307,21 @@ class SteamModCreator:
             with open(mod_file_path, 'w', encoding='utf-8') as mod_file:
                 mod_file.write(mod_file_content)
 
+            # Create descriptor.mod inside the mod folder
+            descriptor_file_path = os.path.join(mod_folder_path, "descriptor.mod")
+            descriptor_file_content = (
+                f'version="1"\n'
+                f'tags={{\n'
+                + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
+                "\n}\n"
+                f'name="{mod_name}"\n'
+                f'supported_version="{supported_version or "TODO"}"\n'
+            )
+
+            # Write descriptor.mod file
+            with open(descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
+                descriptor_file.write(descriptor_file_content)
+            
             # Show success message
             messagebox.showinfo("Mod Created", 
                                 f"Mod successfully created:\n\n"
@@ -314,10 +332,11 @@ class SteamModCreator:
         except Exception as e:
             # Handle any errors during mod creation
             messagebox.showerror("Mod Creation Error", 
-                                 f"Could not create mod:\n{str(e)}")
+                                f"Could not create mod:\n{str(e)}")
             import traceback
             traceback.print_exc()
 
+        
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
