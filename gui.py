@@ -291,13 +291,13 @@ class SteamModCreator:
             
             # Prepare mod file content
             mod_file_content = (
-                f'name="{mod_name}"\n'
-                f'version="{supported_version or "0.0.1"}"\n'
+                f'version="1"\n'
                 f'tags={{\n'
                 + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
                 "\n}\n"
+                f'name="{mod_name}"\n'
                 f'supported_version="{supported_version or "TODO"}"\n'
-                f'path="mod/{short_mod_name}"\n'
+                f'path="{mod_folder_path}"\n'
             )
 
             # Write .mod file
