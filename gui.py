@@ -98,7 +98,7 @@ class SteamModCreator:
 
         # Tooltip for Supported Version
         ttk.Label(supported_version_frame, 
-                  text="Automatically fetched latest version from Patches wiki", 
+                  text="Automatically fetched latest version from launcher", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
@@ -157,7 +157,6 @@ class SteamModCreator:
                 return None
 
             # Read the JSON file
-            import json
             with open(launcher_settings_path, 'r', encoding='utf-8') as file:
                 settings = json.load(file)
 
@@ -271,25 +270,53 @@ class SteamModCreator:
         # Get the supported version from the entry
         supported_version = self.supported_version_entry.get().strip()
 
-        # Prepare metadata output
-        metadata = (
-            f"name=\"{mod_name}\"\n"
-            f"version=\"0.0.1\"\n"
-            f"tags={{\n"
-            + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
-            "\n}\n"
-            f"supported_version=\"{supported_version or 'TODO'}\"\n"
-            f"path=\"TODO\""
-        )
+        try:
+            # Find Paradox Interactive Documents folder
+            if platform.system() == "Windows":
+                documents_path = os.path.join(os.path.expanduser('~'), 'Documents', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+            elif platform.system() == "Linux":
+                documents_path = os.path.join(os.path.expanduser('~'), '.local', 'share', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+            else:
+                raise OSError("Unsupported operating system")
 
-        # Here you can add logic to actually create the mod
-        messagebox.showinfo("Mod Creation", 
-                            f"Creating mod:\n\n"
-                            f"Name: {mod_name}\n"
-                            f"Short Name: {short_mod_name}\n"
-                            f"Steam Path: {self.steam_path}\n\n"
-                            f"Selected Tags:\n{', '.join(selected_tags) if selected_tags else 'No tags selected'}\n\n"
-                            f"Metadata:\n{metadata}")
+            # Ensure the mod directory exists
+            os.makedirs(documents_path, exist_ok=True)
+
+            # Create mod folder
+            mod_folder_path = os.path.join(documents_path, short_mod_name)
+            os.makedirs(mod_folder_path, exist_ok=True)
+
+            # Create .mod file
+            mod_file_path = os.path.join(documents_path, f"{short_mod_name}.mod")
+            
+            # Prepare mod file content
+            mod_file_content = (
+                f'name="{mod_name}"\n'
+                f'version="{supported_version or "0.0.1"}"\n'
+                f'tags={{\n'
+                + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
+                "\n}\n"
+                f'supported_version="{supported_version or "TODO"}"\n'
+                f'path="mod/{short_mod_name}"\n'
+            )
+
+            # Write .mod file
+            with open(mod_file_path, 'w', encoding='utf-8') as mod_file:
+                mod_file.write(mod_file_content)
+
+            # Show success message
+            messagebox.showinfo("Mod Created", 
+                                f"Mod successfully created:\n\n"
+                                f"Name: {mod_name}\n"
+                                f"Short Name: {short_mod_name}\n"
+                                f"Location: {mod_folder_path}")
+
+        except Exception as e:
+            # Handle any errors during mod creation
+            messagebox.showerror("Mod Creation Error", 
+                                 f"Could not create mod:\n{str(e)}")
+            import traceback
+            traceback.print_exc()
 
 def main():
     # Use ttkbootstrap for a modern look
