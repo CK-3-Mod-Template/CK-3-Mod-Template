@@ -4,6 +4,8 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
+import requests
+from bs4 import BeautifulSoup
 
 class SteamModCreator:
     def __init__(self, root):
@@ -97,7 +99,7 @@ class SteamModCreator:
 
         # Tooltip for Supported Version
         ttk.Label(supported_version_frame, 
-                  text="Copy the top version from the Patches wiki page", 
+                  text="Automatically fetched latest version from Patches wiki", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
@@ -130,6 +132,40 @@ class SteamModCreator:
 
         # Add some padding at the bottom of the tags frame
         tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
+
+        # Automatically fetch the latest CK3 version
+        self.latest_version = self.get_latest_ck3_version()
+        
+        # Pre-fill the supported version entry
+        if self.latest_version:
+            self.supported_version_entry.insert(0, self.latest_version)
+
+    def get_latest_ck3_version(self):
+        try:
+            # Fetch the Patches wiki page
+            url = "https://ck3.paradoxwikis.com/Patches"
+            response = requests.get(url)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            # Parse the HTML content
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+            # Find the first version number 
+            # This might need adjustment based on the exact HTML structure of the page
+            version_element = soup.select_one('.wikitable tr:nth-child(2) td:first-child')
+            
+            if version_element:
+                # Clean and return the version number
+                version = version_element.get_text(strip=True)
+                return version
+            
+            return None
+
+        except Exception as e:
+            # If there's any error (network, parsing, etc.), show a message
+            messagebox.showwarning("Version Fetch Error", 
+                                   f"Could not automatically fetch the latest version:\n{str(e)}")
+            return None
 
     def create_action_buttons(self):
         # Button Frame
