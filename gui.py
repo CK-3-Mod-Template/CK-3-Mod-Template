@@ -72,6 +72,36 @@ class SteamModCreator:
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
+        # Mod Tags Section
+        tags_frame = ttk.LabelFrame(self.main_frame, text="Mod Tags", padding="10 10 10 10")
+        tags_frame.pack(fill='x', pady=10)
+
+        # List of mod tags
+        mod_tags = [
+            "Alternative History", "Balance", "Bookmarks", "Character Focuses", 
+            "Character Interactions", "Culture", "Decisions", "Events", "Fixes", 
+            "Gameplay", "Graphics", "Historical", "Map", "Portraits", "Religion", 
+            "Schemes", "Sound", "Total Conversion", "Translation", "Utilities", "Warfare"
+        ]
+
+        # Create a dictionary to store checkbox variables
+        self.mod_tags_vars = {}
+
+        # Create checkboxes in a grid layout
+        for i, tag in enumerate(mod_tags):
+            var = tk.BooleanVar()
+            self.mod_tags_vars[tag] = var
+            cb = ttk.Checkbutton(tags_frame, text=tag, variable=var)
+            
+            # Calculate row and column
+            row = i // 3
+            col = i % 3
+            
+            cb.grid(row=row, column=col, sticky='w', padx=5, pady=2)
+
+        # Add some padding at the bottom of the tags frame
+        tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
+
     def create_action_buttons(self):
         # Button Frame
         button_frame = ttk.Frame(self.main_frame)
@@ -155,10 +185,16 @@ class SteamModCreator:
             messagebox.showerror("Error", "Short Mod Name cannot contain spaces")
             return
 
+        # Collect selected tags
+        selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
+
         # Here you can add logic to actually create the mod
         messagebox.showinfo("Mod Creation", 
-                            f"Creating mod:\n\nName: {mod_name}\nShort Name: {short_mod_name}\n\nSteam Path: {self.steam_path}")
-
+                            f"Creating mod:\n\n"
+                            f"Name: {mod_name}\n"
+                            f"Short Name: {short_mod_name}\n"
+                            f"Steam Path: {self.steam_path}\n\n"
+                            f"Selected Tags:\n{', '.join(selected_tags) if selected_tags else 'No tags selected'}")
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
