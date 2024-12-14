@@ -1,19 +1,103 @@
 import os
 import platform
 import tkinter as tk
-from tkinter import messagebox, simpledialog, filedialog
+from tkinter import messagebox, filedialog, ttk
+import ttkbootstrap as ttk  # Modern themed Tkinter
 
 class SteamModCreator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Steam Mod Creator")
-        self.root.geometry("400x300")
+        self.root.title("CK3 Mod Creator")
+        self.root.geometry("800x800")
+        self.root.configure(bg='#f0f0f0')
+
+        # Style configuration
+        self.style = ttk.Style(theme='flatly')  # Modern, clean theme
+
+        # Create main container
+        self.main_frame = ttk.Frame(self.root, padding="20 20 20 20")
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Header
+        self.create_header()
 
         # Steam Path Detection
         self.steam_path = self.detect_steam_path()
 
-        # Create UI Elements
-        self.create_ui()
+        # Create Input Sections
+        self.create_input_sections()
+
+        # Create Action Buttons
+        self.create_action_buttons()
+
+        # Steam Path Display
+        self.create_steam_path_display()
+
+    def create_header(self):
+        # Title Label
+        header_label = ttk.Label(
+            self.main_frame, 
+            text="Crusader Kings III Mod Creator", 
+            font=('Helvetica', 16, 'bold'),
+            foreground='#333333'
+        )
+        header_label.pack(pady=(0, 20))
+
+    def create_input_sections(self):
+        # Mod Name Input
+        mod_name_frame = ttk.Frame(self.main_frame)
+        mod_name_frame.pack(fill='x', pady=10)
+
+        ttk.Label(mod_name_frame, text="Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
+        self.mod_name_entry = ttk.Entry(mod_name_frame, width=50)
+        self.mod_name_entry.pack(fill='x', expand=True)
+        
+        # Tooltip for Mod Name
+        ttk.Label(mod_name_frame, 
+                  text="Enter the full name of your mod (e.g., 'Medieval Overhaul')", 
+                  font=('Helvetica', 8), 
+                  foreground='gray').pack(anchor='w')
+
+        # Short Mod Name Input
+        short_mod_name_frame = ttk.Frame(self.main_frame)
+        short_mod_name_frame.pack(fill='x', pady=10)
+
+        ttk.Label(short_mod_name_frame, text="Short Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
+        self.short_mod_name_entry = ttk.Entry(short_mod_name_frame, width=30)
+        self.short_mod_name_entry.pack(fill='x', expand=True)
+        
+        # Tooltip for Short Mod Name
+        ttk.Label(short_mod_name_frame, 
+                  text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
+                  font=('Helvetica', 8), 
+                  foreground='gray').pack(anchor='w')
+
+    def create_action_buttons(self):
+        # Button Frame
+        button_frame = ttk.Frame(self.main_frame)
+        button_frame.pack(fill='x', pady=20)
+
+        # Create Mod Button
+        create_button = ttk.Button(
+            button_frame, 
+            text="Create Mod", 
+            command=self.create_mod,
+            style='success.TButton'  # Green success button
+        )
+        create_button.pack(fill='x')
+
+    def create_steam_path_display(self):
+        # Steam Path Frame
+        steam_path_frame = ttk.Frame(self.main_frame)
+        steam_path_frame.pack(fill='x', pady=10)
+
+        ttk.Label(steam_path_frame, text="Steam Installation Path:", font=('Helvetica', 10)).pack(anchor='w')
+        
+        # Scrollable Steam Path
+        steam_path_display = tk.Text(steam_path_frame, height=3, width=50, wrap=tk.WORD)
+        steam_path_display.insert(tk.END, self.steam_path)
+        steam_path_display.config(state=tk.DISABLED)  # Make read-only
+        steam_path_display.pack(fill='x')
 
     def detect_steam_path(self):
         try:
@@ -58,37 +142,26 @@ class SteamModCreator:
             self.root.quit()
         return steam_path
 
-    def create_ui(self):
-        # Mod Name Input
-        tk.Label(self.root, text="Mod Name:").pack(pady=5)
-        self.mod_name_entry = tk.Entry(self.root, width=40)
-        self.mod_name_entry.pack(pady=5)
-
-        # Short Mod Name Input
-        tk.Label(self.root, text="Short Mod Name:").pack(pady=5)
-        self.short_mod_name_entry = tk.Entry(self.root, width=20)
-        self.short_mod_name_entry.pack(pady=5)
-
-        # Create Mod Button
-        create_button = tk.Button(self.root, text="Create Mod", command=self.create_mod)
-        create_button.pack(pady=20)
-
-        # Steam Path Display
-        tk.Label(self.root, text=f"Steam Path: {self.steam_path}", wraplength=350).pack(pady=10)
-
     def create_mod(self):
-        mod_name = self.mod_name_entry.get()
-        short_mod_name = self.short_mod_name_entry.get()
+        mod_name = self.mod_name_entry.get().strip()
+        short_mod_name = self.short_mod_name_entry.get().strip()
 
         if not mod_name or not short_mod_name:
             messagebox.showerror("Error", "Please enter both Mod Name and Short Mod Name")
             return
 
+        # Validation for short mod name (no spaces, lowercase)
+        if ' ' in short_mod_name:
+            messagebox.showerror("Error", "Short Mod Name cannot contain spaces")
+            return
+
         # Here you can add logic to actually create the mod
-        messagebox.showinfo("Mod Creation", f"Creating mod:\nName: {mod_name}\nShort Name: {short_mod_name}")
+        messagebox.showinfo("Mod Creation", 
+                            f"Creating mod:\n\nName: {mod_name}\nShort Name: {short_mod_name}\n\nSteam Path: {self.steam_path}")
 
 def main():
-    root = tk.Tk()
+    # Use ttkbootstrap for a modern look
+    root = ttk.Window(themename="flatly")
     app = SteamModCreator(root)
     root.mainloop()
 
