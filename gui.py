@@ -305,7 +305,7 @@ class SteamModCreator:
                 "\n}\n"
                 f'name="{mod_name}"\n'
                 f'supported_version="{supported_version or "TODO"}"\n'
-                f'path="{mod_folder_path}"\n'
+                f'path="{mod_folder_path.replace(os.sep, "/")}"\n'
             )
 
             # Write .mod file in both the documents folder and the local folder
