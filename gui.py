@@ -6,12 +6,13 @@ import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import requests
 from bs4 import BeautifulSoup
+import lxml.html
 
 class SteamModCreator:
     def __init__(self, root):
         self.root = root
         self.root.title("CK3 Mod Creator")
-        self.root.geometry("800x800")
+        self.root.geometry("1000x1000")
         self.root.configure(bg='#f0f0f0')
 
         # Style configuration
@@ -147,16 +148,15 @@ class SteamModCreator:
             response = requests.get(url)
             response.raise_for_status()  # Raise an exception for bad status codes
 
-            # Parse the HTML content
-            soup = BeautifulSoup(response.text, 'html.parser')
+            # Parse the HTML content with lxml
+            tree = lxml.html.fromstring(response.text)
 
-            # Find the first version number 
-            # This might need adjustment based on the exact HTML structure of the page
-            version_element = soup.select_one('.wikitable tr:nth-child(2) td:first-child')
+            # Find the element using the full xpath
+            version_elements = tree.xpath('/html/body/div[4]/div[2]/div[3]/div[5]/div[1]/table/tbody/tr[2]/td[1]')
             
-            if version_element:
-                # Clean and return the version number
-                version = version_element.get_text(strip=True)
+            if version_elements:
+                # Get the text of the first matching element
+                version = version_elements[0].text_content().strip()
                 return version
             
             return None
