@@ -282,15 +282,20 @@ class SteamModCreator:
             else:
                 raise OSError("Unsupported operating system")
 
-            # Ensure the mod directory exists
+            # Ensure the mod directory exists in both the documents folder and the local folder
             os.makedirs(documents_path, exist_ok=True)
+            local_path = os.path.join(os.path.dirname(__file__), 'debug', 'output')
+            os.makedirs(local_path, exist_ok=True)
 
-            # Create mod folder
+            # Create mod folder in both the documents folder and the local folder
             mod_folder_path = os.path.join(documents_path, short_mod_name)
             os.makedirs(mod_folder_path, exist_ok=True)
+            local_mod_folder_path = os.path.join(local_path, short_mod_name)
+            os.makedirs(local_mod_folder_path, exist_ok=True)
 
-            # Create .mod file
+            # Create .mod file in both the documents folder and the local folder
             mod_file_path = os.path.join(documents_path, f"{short_mod_name}.mod")
+            local_mod_file_path = os.path.join(local_path, f"{short_mod_name}.mod")
             
             # Prepare mod file content
             mod_file_content = (
@@ -303,12 +308,15 @@ class SteamModCreator:
                 f'path="{mod_folder_path}"\n'
             )
 
-            # Write .mod file
+            # Write .mod file in both the documents folder and the local folder
             with open(mod_file_path, 'w', encoding='utf-8') as mod_file:
                 mod_file.write(mod_file_content)
+            with open(local_mod_file_path, 'w', encoding='utf-8') as mod_file:
+                mod_file.write(mod_file_content)
 
-            # Create descriptor.mod inside the mod folder
+            # Create descriptor.mod inside the mod folder in both the documents folder and the local folder
             descriptor_file_path = os.path.join(mod_folder_path, "descriptor.mod")
+            local_descriptor_file_path = os.path.join(local_mod_folder_path, "descriptor.mod")
             descriptor_file_content = (
                 f'version="1"\n'
                 f'tags={{\n'
@@ -318,8 +326,10 @@ class SteamModCreator:
                 f'supported_version="{supported_version or "TODO"}"\n'
             )
 
-            # Write descriptor.mod file
+            # Write descriptor.mod file in both the documents folder and the local folder
             with open(descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
+                descriptor_file.write(descriptor_file_content)
+            with open(local_descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
                 descriptor_file.write(descriptor_file_content)
             
             # Show success message
