@@ -188,13 +188,25 @@ class SteamModCreator:
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
 
+        # Prepare metadata output
+        metadata = (
+            f"name=\"{mod_name}\"\n"
+            f"version=\"0.0.1\"\n"
+            f"tags={{\n"
+            + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
+            "\n}\n"
+            f"supported_version=\"TODO\"\n"
+            f"path=\"TODO\""
+        )
+
         # Here you can add logic to actually create the mod
         messagebox.showinfo("Mod Creation", 
                             f"Creating mod:\n\n"
                             f"Name: {mod_name}\n"
                             f"Short Name: {short_mod_name}\n"
                             f"Steam Path: {self.steam_path}\n\n"
-                            f"Selected Tags:\n{', '.join(selected_tags) if selected_tags else 'No tags selected'}")
+                            f"Selected Tags:\n{', '.join(selected_tags) if selected_tags else 'No tags selected'}\n\n"
+                            f"Metadata:\n{metadata}")
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
