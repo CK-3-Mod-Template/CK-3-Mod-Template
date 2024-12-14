@@ -3,6 +3,7 @@ import platform
 import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
+import webbrowser
 
 class SteamModCreator:
     def __init__(self, root):
@@ -69,6 +70,34 @@ class SteamModCreator:
         # Tooltip for Short Mod Name
         ttk.Label(short_mod_name_frame, 
                   text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
+                  font=('Helvetica', 8), 
+                  foreground='gray').pack(anchor='w')
+
+        # Supported Version Input
+        supported_version_frame = ttk.Frame(self.main_frame)
+        supported_version_frame.pack(fill='x', pady=10)
+
+        ttk.Label(supported_version_frame, text="Supported Version:", font=('Helvetica', 10)).pack(anchor='w')
+        
+        # Create a frame for entry and button
+        version_input_frame = ttk.Frame(supported_version_frame)
+        version_input_frame.pack(fill='x', expand=True)
+
+        self.supported_version_entry = ttk.Entry(version_input_frame, width=30)
+        self.supported_version_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=(0, 10))
+
+        # Button to open Patches wiki
+        open_patches_btn = ttk.Button(
+            version_input_frame, 
+            text="Open Patches Wiki", 
+            command=lambda: webbrowser.open("https://ck3.paradoxwikis.com/Patches"),
+            style='info.TButton'  # Use an info-styled button
+        )
+        open_patches_btn.pack(side=tk.RIGHT)
+
+        # Tooltip for Supported Version
+        ttk.Label(supported_version_frame, 
+                  text="Copy the top version from the Patches wiki page", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
@@ -188,6 +217,9 @@ class SteamModCreator:
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
 
+        # Get the supported version from the entry
+        supported_version = self.supported_version_entry.get().strip()
+
         # Prepare metadata output
         metadata = (
             f"name=\"{mod_name}\"\n"
@@ -195,7 +227,7 @@ class SteamModCreator:
             f"tags={{\n"
             + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
             "\n}\n"
-            f"supported_version=\"TODO\"\n"
+            f"supported_version=\"{supported_version or 'TODO'}\"\n"
             f"path=\"TODO\""
         )
 
@@ -207,6 +239,7 @@ class SteamModCreator:
                             f"Steam Path: {self.steam_path}\n\n"
                             f"Selected Tags:\n{', '.join(selected_tags) if selected_tags else 'No tags selected'}\n\n"
                             f"Metadata:\n{metadata}")
+
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
