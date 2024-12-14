@@ -143,28 +143,45 @@ class SteamModCreator:
 
     def get_latest_ck3_version(self):
         try:
-            # Fetch the Patches wiki page
-            url = "https://ck3.paradoxwikis.com/Patches"
-            response = requests.get(url)
-            response.raise_for_status()  # Raise an exception for bad status codes
+            # Construct the path to the launcher-settings.json
+            launcher_settings_path = os.path.join(
+                self.steam_path, 
+                'steamapps', 
+                'common', 
+                'Crusader Kings III', 
+                'launcher', 
+                'launcher-settings.json'
+            )
 
-            # Parse the HTML content with lxml
-            tree = lxml.html.fromstring(response.text)
+            # Check if the file exists
+            if not os.path.exists(launcher_settings_path):
+                print(f"Launcher settings file not found at: {launcher_settings_path}")
+                return None
 
-            # Find the element using the full xpath
-            version_elements = tree.xpath('/html/body/div[4]/div[2]/div[3]/div[5]/div[1]/table/tbody/tr[2]/td[1]')
-            
-            if version_elements:
-                # Get the text of the first matching element
-                version = version_elements[0].text_content().strip()
+            # Read the JSON file
+            import json
+            with open(launcher_settings_path, 'r', encoding='utf-8') as file:
+                settings = json.load(file)
+
+            # Extract the rawVersion
+            version = settings.get('rawVersion')
+
+            if version:
+                print(f"Found CK3 Version: {version}")
                 return version
-            
-            return None
+            else:
+                print("No rawVersion found in launcher-settings.json")
+                return None
 
         except Exception as e:
-            # If there's any error (network, parsing, etc.), show a message
+            # Detailed error logging
+            import traceback
+            print("Full Error Traceback:")
+            traceback.print_exc()
+            
+            # If there's any error (file reading, parsing, etc.), show a message
             messagebox.showwarning("Version Fetch Error", 
-                                   f"Could not automatically fetch the latest version:\n{str(e)}")
+                                f"Could not fetch the game version:\n{str(e)}")
             return None
 
     def create_action_buttons(self):
