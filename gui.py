@@ -4,9 +4,7 @@ import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
-import requests
-from bs4 import BeautifulSoup
-import lxml.html
+import json
 
 class SteamModCreator:
     def __init__(self, root):
