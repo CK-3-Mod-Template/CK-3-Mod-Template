@@ -25,21 +25,22 @@ jobs:
           pip install -r requirements.txt
 
       - name: Remove obsolete pathlib
+        if: runner.os != 'Windows'
         run: |
           python -m pip uninstall -y pathlib
 
       - name: Build Executable
         run: |
-          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+          if [[ $RUNNER_OS == 'Linux' ]]; then
             pyinstaller --onefile gui.py
             mv dist/gui dist/gui_linux
-          elif [ ${{ matrix.os }} == 'macos-latest' ]; then
+          elif [[ $RUNNER_OS == 'macOS' ]]; then
             pyinstaller --onefile gui.py
             mv dist/gui dist/gui_mac
-          elif [ ${{ matrix.os }} == 'windows-latest' ]; then
+          elif ($env:RUNNER_OS -eq 'Windows') {
             pyinstaller --onefile gui.py
-            move dist\gui.exe dist\gui_windows.exe
-          fi
+            Move-Item -Path dist\gui.exe -Destination dist\gui_windows.exe
+          }
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
