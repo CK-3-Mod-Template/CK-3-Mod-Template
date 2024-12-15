@@ -1,0 +1,12 @@
+# Core dependencies
+#tkinter
+ttkbootstrap
+pyinstaller
+
+# Cross-platform compatibility
+pathlib
+platformdirs
+
+# Optional: For additional system integrations
+pywin32; sys_platform == 'win32'
+pyobjc-core; sys_platform == 'darwin'
