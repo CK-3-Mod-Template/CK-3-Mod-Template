@@ -28,18 +28,23 @@ jobs:
         run: |
           python -m pip uninstall -y pathlib
 
-      - name: Build Executable
+      - name: Build Executable on Linux
+        if: matrix.os == 'ubuntu-latest'
         run: |
-          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            pyinstaller --onefile gui.py
-            mv dist/gui dist/gui_linux
-          elif [ ${{ matrix.os }} == 'macos-latest' ]; then
-            pyinstaller --onefile gui.py
-            mv dist/gui dist/gui_mac
-          elif [ ${{ matrix.os }} == 'windows-latest' ]; then
-            pyinstaller --onefile gui.py
-            Move-Item -Path dist\gui.exe -Destination dist\gui_windows.exe
-          fi
+          pyinstaller --onefile gui.py
+          mv dist/gui dist/gui_linux
+
+      - name: Build Executable on MacOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          pyinstaller --onefile gui.py
+          mv dist/gui dist/gui_mac
+
+      - name: Build Executable on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          pyinstaller --onefile gui.py
+          Move-Item -Path dist\gui.exe -Destination dist\gui_windows.exe
         shell: powershell
 
       - name: Upload Artifacts
