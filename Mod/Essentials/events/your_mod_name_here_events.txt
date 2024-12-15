@@ -1,0 +1,9 @@
+﻿namespace = <your_mod_name_here>_error_suppression
+
+<your_mod_name_here>_error_suppression.0001 = {
+  hidden = yes
+  orphan = yes
+  trigger = {
+    exists = global_var:<your_mod_name_here>_is_loaded
+  }
+}
