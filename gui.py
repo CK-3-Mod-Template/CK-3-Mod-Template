@@ -194,7 +194,59 @@ class SteamModCreator:
             command=self.create_mod,
             style='success.TButton'  # Green success button
         )
-        create_button.pack(fill='x')
+        create_button.pack(fill='x', pady=(0, 10))
+
+        # List Game Files Button
+        list_files_button = ttk.Button(
+            button_frame, 
+            text="List Game Files", 
+            command=self.list_game_files,
+            style='info.TButton'  # Blue info button
+        )
+        list_files_button.pack(fill='x')
+
+    def list_game_files(self):
+        # Construct the path to the Crusader Kings III game directory
+        game_dir = os.path.join(self.steam_path, 'steamapps', 'common', 'Crusader Kings III', 'game')
+        
+        # Check if the directory exists
+        if not os.path.exists(game_dir):
+            messagebox.showerror("Error", f"Game directory not found: {game_dir}")
+            return
+
+        # Create a list to store file paths
+        file_list = []
+
+        # Walk through the directory and its subdirectories
+        for root, dirs, files in os.walk(game_dir):
+            for file in files:
+                # Get the full path of the file
+                full_path = os.path.join(root, file)
+                # Get the relative path from the game directory
+                relative_path = os.path.relpath(full_path, game_dir)
+                file_list.append(relative_path)
+
+        # Open a new window to display the files
+        file_window = tk.Toplevel(self.root)
+        file_window.title("CK3 Game Files")
+        file_window.geometry("800x600")
+
+        # Create a text widget to display files
+        text_widget = tk.Text(file_window, wrap=tk.WORD)
+        text_widget.pack(fill=tk.BOTH, expand=True)
+
+        # Insert the file list into the text widget
+        text_widget.insert(tk.END, "Total Files Found: {}\n\n".format(len(file_list)))
+        for file_path in sorted(file_list):
+            text_widget.insert(tk.END, file_path + "\n")
+
+        # Make the text widget read-only
+        text_widget.config(state=tk.DISABLED)
+
+        # Add a scrollbar
+        scrollbar = ttk.Scrollbar(file_window, command=text_widget.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        text_widget.config(yscrollcommand=scrollbar.set)
 
     def create_steam_path_display(self):
         # Steam Path Frame
