@@ -55,3 +55,55 @@ jobs:
         with:
           name: python-artifacts-${{ matrix.os }}
           path: dist/
+
+  # upload-release-assets:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Download Artifacts (Ubuntu)
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: python-artifacts-ubuntu-latest
+  #         path: ./artifacts/ubuntu
+
+  #     - name: Download Artifacts (MacOS)
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: python-artifacts-macos-latest
+  #         path: ./artifacts/macos
+
+  #     - name: Download Artifacts (Windows)
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: python-artifacts-windows-latest
+  #         path: ./artifacts/windows
+
+  #     - name: Upload Release Assets
+  #       uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ github.event.release.upload_url }}
+  #         asset_path: ./artifacts/ubuntu/**
+  #         asset_name: python-artifacts-ubuntu-latest.zip
+  #         asset_content_type: application/zip
+  #     - uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ github.event.release.upload_url }}
+  #         asset_path: ./artifacts/macos/**
+  #         asset_name: python-artifacts-macos-latest.zip
+  #         asset_content_type: application/zip
+  #     - uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ github.event.release.upload_url }}
+  #         asset_path: ./artifacts/windows/**
+  #         asset_name: python-artifacts-windows-latest.zip
+  #         asset_content_type: application/zip
