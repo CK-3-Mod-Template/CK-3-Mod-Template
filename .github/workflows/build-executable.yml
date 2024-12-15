@@ -40,6 +40,7 @@ jobs:
             pyinstaller --onefile gui.py
             Move-Item -Path dist\gui.exe -Destination dist\gui_windows.exe
           fi
+        shell: powershell
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
