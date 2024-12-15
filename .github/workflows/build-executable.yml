@@ -38,7 +38,7 @@ jobs:
             mv dist/gui dist/gui_mac
           elif [ ${{ matrix.os }} == 'windows-latest' ]; then
             pyinstaller --onefile gui.py
-            move dist\gui.exe dist\gui_windows.exe
+            Move-Item -Path dist\gui.exe -Destination dist\gui_windows.exe
           fi
 
       - name: Upload Artifacts
