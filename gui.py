@@ -343,7 +343,7 @@ class SteamModCreator:
                     # Iterate through all items in source directory
                     for item in os.listdir(src):
                         s = os.path.join(src, item)
-                        d = os.path.join(dst, item)
+                        d = os.path.join(dst, item.replace('<your_mod_name_here>', short_mod_name))
                         
                         if os.path.isdir(s):
                             # Recursively copy subdirectories
