@@ -334,6 +334,39 @@ class SteamModCreator:
             with open(local_descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
                 descriptor_file.write(descriptor_file_content)
             
+            # Copy essentials folder
+            essentials_source = os.path.join(os.path.dirname(__file__), 'mod', 'essentials')
+            
+            # Check if essentials folder exists
+            if os.path.exists(essentials_source):
+                # Recursive copy function with placeholder replacement
+                def copy_and_replace(src, dst):
+                    # Ensure destination directory exists
+                    os.makedirs(dst, exist_ok=True)
+                    
+                    # Iterate through all items in source directory
+                    for item in os.listdir(src):
+                        s = os.path.join(src, item)
+                        d = os.path.join(dst, item)
+                        
+                        if os.path.isdir(s):
+                            # Recursively copy subdirectories
+                            copy_and_replace(s, d)
+                        else:
+                            # Copy and replace placeholders for files
+                            with open(s, 'r', encoding='utf-8') as source_file:
+                                content = source_file.read()
+                            
+                            # Replace placeholders
+                            content = content.replace('<your_mod_name_here>', short_mod_name)
+                            
+                            # Write to destination
+                            with open(d, 'w', encoding='utf-8') as dest_file:
+                                dest_file.write(content)
+
+                # Copy essentials to both document and local mod folders
+                copy_and_replace(essentials_source, mod_folder_path)
+                copy_and_replace(essentials_source, local_mod_folder_path)
             # Show success message
             messagebox.showinfo("Mod Created", 
                                 f"Mod successfully created:\n\n"
