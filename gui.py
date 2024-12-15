@@ -7,8 +7,9 @@ import webbrowser
 import json
 
 class SteamModCreator:
-    def __init__(self, root):
+    def __init__(self, root, debug):
         self.root = root
+        self.debug = debug  # New debug flag
         self.root.title("CK3 Mod Creator")
         self.root.geometry("1000x1000")
         self.root.configure(bg='#f0f0f0')
@@ -276,28 +277,28 @@ class SteamModCreator:
         supported_version = self.supported_version_entry.get().strip()
 
         try:
-            # Find Paradox Interactive Documents folder
-            if platform.system() == "Windows":
-                documents_path = os.path.join(os.path.expanduser('~'), 'Documents', 'Paradox Interactive', 'Crusader Kings III', 'mod')
-            elif platform.system() == "Linux":
-                documents_path = os.path.join(os.path.expanduser('~'), '.local', 'share', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+            # Determine mod paths based on debug flag
+            if self.debug:
+                # Use local debug output path
+                documents_path = os.path.join(os.path.dirname(__file__), 'debug', 'output')
             else:
-                raise OSError("Unsupported operating system")
+                # Use Paradox Interactive Documents folder
+                if platform.system() == "Windows":
+                    documents_path = os.path.join(os.path.expanduser('~'), 'Documents', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+                elif platform.system() == "Linux":
+                    documents_path = os.path.join(os.path.expanduser('~'), '.local', 'share', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+                else:
+                    raise OSError("Unsupported operating system")
 
-            # Ensure the mod directory exists in both the documents folder and the local folder
+            # Ensure the mod directory exists
             os.makedirs(documents_path, exist_ok=True)
-            local_path = os.path.join(os.path.dirname(__file__), 'debug', 'output')
-            os.makedirs(local_path, exist_ok=True)
 
-            # Create mod folder in both the documents folder and the local folder
+            # Create mod folder
             mod_folder_path = os.path.join(documents_path, short_mod_name)
             os.makedirs(mod_folder_path, exist_ok=True)
-            local_mod_folder_path = os.path.join(local_path, short_mod_name)
-            os.makedirs(local_mod_folder_path, exist_ok=True)
 
-            # Create .mod file in both the documents folder and the local folder
+            # Create .mod file
             mod_file_path = os.path.join(documents_path, f"{short_mod_name}.mod")
-            local_mod_file_path = os.path.join(local_path, f"{short_mod_name}.mod")
             
             # Prepare mod file content
             mod_file_content = (
@@ -310,15 +311,12 @@ class SteamModCreator:
                 f'path="{mod_folder_path.replace(os.sep, "/")}"\n'
             )
 
-            # Write .mod file in both the documents folder and the local folder
+            # Write .mod file
             with open(mod_file_path, 'w', encoding='utf-8') as mod_file:
                 mod_file.write(mod_file_content)
-            with open(local_mod_file_path, 'w', encoding='utf-8') as mod_file:
-                mod_file.write(mod_file_content)
 
-            # Create descriptor.mod inside the mod folder in both the documents folder and the local folder
+            # Create descriptor.mod inside the mod folder
             descriptor_file_path = os.path.join(mod_folder_path, "descriptor.mod")
-            local_descriptor_file_path = os.path.join(local_mod_folder_path, "descriptor.mod")
             descriptor_file_content = (
                 f'version="1"\n'
                 f'tags={{\n'
@@ -328,12 +326,10 @@ class SteamModCreator:
                 f'supported_version="{supported_version or "TODO"}"\n'
             )
 
-            # Write descriptor.mod file in both the documents folder and the local folder
+            # Write descriptor.mod file
             with open(descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
                 descriptor_file.write(descriptor_file_content)
-            with open(local_descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
-                descriptor_file.write(descriptor_file_content)
-            
+
             # Copy essentials folder
             essentials_source = os.path.join(os.path.dirname(__file__), 'mod', 'essentials')
             
@@ -364,9 +360,9 @@ class SteamModCreator:
                             with open(d, 'w', encoding='utf-8') as dest_file:
                                 dest_file.write(content)
 
-                # Copy essentials to both document and local mod folders
+                # Copy essentials to mod folder
                 copy_and_replace(essentials_source, mod_folder_path)
-                copy_and_replace(essentials_source, local_mod_folder_path)
+            
             # Show success message
             messagebox.showinfo("Mod Created", 
                                 f"Mod successfully created:\n\n"
@@ -380,11 +376,10 @@ class SteamModCreator:
                                 f"Could not create mod:\n{str(e)}")
             import traceback
             traceback.print_exc()
-        
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
-    app = SteamModCreator(root)
+    app = SteamModCreator(root, debug=False)
     root.mainloop()
 
 if __name__ == "__main__":
