@@ -221,8 +221,10 @@ class SteamModCreator:
         if platform.system() == "Windows":
             try:
                 import winreg
-                reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\WOW6432Node\Valve\Steam")
-                steam_path, _ = winreg.QueryValueEx(reg_key, "InstallPath")
+                reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\Valve\Steam")
+                #reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\WOW6432Node\Valve\Steam")
+                #steam_path, _ = winreg.QueryValueEx(reg_key, "InstallPath")
+                steam_path, _ = winreg.QueryValueEx(reg_key, "SteamPath")
                 winreg.CloseKey(reg_key)
                 return steam_path
             except FileNotFoundError:
