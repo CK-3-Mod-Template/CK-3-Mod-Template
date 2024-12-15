@@ -221,7 +221,7 @@ class SteamModCreator:
         if platform.system() == "Windows":
             try:
                 import winreg
-                reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Valve\Steam")
+                reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\WOW6432Node\Valve\Steam")
                 steam_path, _ = winreg.QueryValueEx(reg_key, "InstallPath")
                 winreg.CloseKey(reg_key)
                 return steam_path
@@ -345,7 +345,6 @@ class SteamModCreator:
                                 f"Could not create mod:\n{str(e)}")
             import traceback
             traceback.print_exc()
-
         
 def main():
     # Use ttkbootstrap for a modern look
