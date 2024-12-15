@@ -266,6 +266,19 @@ class SteamModCreator:
         if ' ' in short_mod_name:
             messagebox.showerror("Error", "Short Mod Name cannot contain spaces")
             return
+        # Add this at the beginning of the create_mod method
+        BLOCKED_SHORT_MOD_NAMES = [
+            "KoH", "CTI", "StA", "PoW", "TCMA", "IMHO", "CTFA", 
+            "Inherichance", "FSB", "Trinity", "SNAT", "EDT", 
+            "LTAF", "Gov", "SoW", "ACS", "SMYCP", "SMYC", "DUIT", 
+            "mrfp"
+        ]
+
+        # Add this validation before creating the mod
+        if short_mod_name in BLOCKED_SHORT_MOD_NAMES:
+            messagebox.showerror("Invalid Mod Name", 
+                                f"The short mod name '{short_mod_name}' is already in use and cannot be used.")
+            return
 
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
