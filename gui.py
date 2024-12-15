@@ -226,28 +226,27 @@ class SteamModCreator:
                 relative_path = os.path.relpath(full_path, game_dir)
                 file_list.append(relative_path)
 
-        # Open a new window to display the files
-        file_window = tk.Toplevel(self.root)
-        file_window.title("CK3 Game Files")
-        file_window.geometry("800x600")
+        # Create a 'data' directory if it doesn't exist
+        data_dir = os.path.join(os.path.dirname(__file__), 'data')
+        os.makedirs(data_dir, exist_ok=True)
 
-        # Create a text widget to display files
-        text_widget = tk.Text(file_window, wrap=tk.WORD)
-        text_widget.pack(fill=tk.BOTH, expand=True)
+        # Define the output file path
+        output_file = os.path.join(data_dir, 'vanilla_files.txt')
 
-        # Insert the file list into the text widget
-        text_widget.insert(tk.END, "Total Files Found: {}\n\n".format(len(file_list)))
-        for file_path in sorted(file_list):
-            text_widget.insert(tk.END, file_path + "\n")
-
-        # Make the text widget read-only
-        text_widget.config(state=tk.DISABLED)
-
-        # Add a scrollbar
-        scrollbar = ttk.Scrollbar(file_window, command=text_widget.yview)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        text_widget.config(yscrollcommand=scrollbar.set)
-
+        # Write the file list to the text file
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(f"Total Files Found: {len(file_list)}\n\n")
+                for file_path in sorted(file_list):
+                    f.write(file_path + "\n")
+            
+            # Show a success message
+            messagebox.showinfo("Success", f"Vanilla files list saved to:\n{output_file}")
+        
+        except Exception as e:
+            # Show an error message if file writing fails
+            messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
+            
     def create_steam_path_display(self):
         # Steam Path Frame
         steam_path_frame = ttk.Frame(self.main_frame)
