@@ -379,7 +379,7 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
-    app = SteamModCreator(root, debug=False)
+    app = SteamModCreator(root, debug=True)
     root.mainloop()
 
 if __name__ == "__main__":
