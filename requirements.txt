@@ -1,0 +1,12 @@
+# Core dependencies
+tkinter>=8.6
+ttkbootstrap>=1.10.1
+pyinstaller>=5.13.2
+
+# Cross-platform compatibility
+pathlib>=1.0.1
+platformdirs>=3.10.0
+
+# Optional: For additional system integrations
+pywin32>=306; sys_platform == 'win32'
+pyobjc-core>=9.0; sys_platform == 'darwin'
