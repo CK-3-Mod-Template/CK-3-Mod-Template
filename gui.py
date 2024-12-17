@@ -9,6 +9,7 @@ from steam_finder import SteamPathFinder as SteamPF
 from UI.steam_path_ui import SteamPathUI
 from UI.header_ui import HeaderUI
 from UI.input_sections_ui import InputSectionsUI
+from UI.action_buttons_ui import ActionButtonsUI
 
 class SteamModCreator:
     def __init__(self, root, debug):
@@ -36,111 +37,114 @@ class SteamModCreator:
         # self.create_input_sections()
 
         # Create Action Buttons
-        self.create_action_buttons()
+        #self.create_action_buttons()
 
 
-        # Use UI component classes
-        
+        # Create Input Sections
         InputSectionsUI.create_input_sections(self.main_frame, self)
+
+        # Create Action Buttons
+        ActionButtonsUI.create_action_buttons(self.main_frame, self)
+
         # Steam Path Display
         SteamPathUI.create_steam_path_display(
             self.main_frame, 
             self.steam_path
         )
 
-    def create_input_sections(self):
-        # Mod Name Input
-        mod_name_frame = ttk.Frame(self.main_frame)
-        mod_name_frame.pack(fill='x', pady=10)
+    # def create_input_sections(self):
+    #     # Mod Name Input
+    #     mod_name_frame = ttk.Frame(self.main_frame)
+    #     mod_name_frame.pack(fill='x', pady=10)
 
-        ttk.Label(mod_name_frame, text="Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
-        self.mod_name_entry = ttk.Entry(mod_name_frame, width=50)
-        self.mod_name_entry.pack(fill='x', expand=True)
+    #     ttk.Label(mod_name_frame, text="Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
+    #     self.mod_name_entry = ttk.Entry(mod_name_frame, width=50)
+    #     self.mod_name_entry.pack(fill='x', expand=True)
         
-        # Tooltip for Mod Name
-        ttk.Label(mod_name_frame, 
-                  text="Enter the full name of your mod (e.g., 'Medieval Overhaul')", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
+    #     # Tooltip for Mod Name
+    #     ttk.Label(mod_name_frame, 
+    #               text="Enter the full name of your mod (e.g., 'Medieval Overhaul')", 
+    #               font=('Helvetica', 8), 
+    #               foreground='gray').pack(anchor='w')
 
-        # Short Mod Name Input
-        short_mod_name_frame = ttk.Frame(self.main_frame)
-        short_mod_name_frame.pack(fill='x', pady=10)
+    #     # Short Mod Name Input
+    #     short_mod_name_frame = ttk.Frame(self.main_frame)
+    #     short_mod_name_frame.pack(fill='x', pady=10)
 
-        ttk.Label(short_mod_name_frame, text="Short Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
-        self.short_mod_name_entry = ttk.Entry(short_mod_name_frame, width=30)
-        self.short_mod_name_entry.pack(fill='x', expand=True)
+    #     ttk.Label(short_mod_name_frame, text="Short Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
+    #     self.short_mod_name_entry = ttk.Entry(short_mod_name_frame, width=30)
+    #     self.short_mod_name_entry.pack(fill='x', expand=True)
         
-        # Tooltip for Short Mod Name
-        ttk.Label(short_mod_name_frame, 
-                  text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
+    #     # Tooltip for Short Mod Name
+    #     ttk.Label(short_mod_name_frame, 
+    #               text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
+    #               font=('Helvetica', 8), 
+    #               foreground='gray').pack(anchor='w')
 
-        # Supported Version Input
-        supported_version_frame = ttk.Frame(self.main_frame)
-        supported_version_frame.pack(fill='x', pady=10)
+    #     # Supported Version Input
+    #     supported_version_frame = ttk.Frame(self.main_frame)
+    #     supported_version_frame.pack(fill='x', pady=10)
 
-        ttk.Label(supported_version_frame, text="Supported Version:", font=('Helvetica', 10)).pack(anchor='w')
+    #     ttk.Label(supported_version_frame, text="Supported Version:", font=('Helvetica', 10)).pack(anchor='w')
         
-        # Create a frame for entry and button
-        version_input_frame = ttk.Frame(supported_version_frame)
-        version_input_frame.pack(fill='x', expand=True)
+    #     # Create a frame for entry and button
+    #     version_input_frame = ttk.Frame(supported_version_frame)
+    #     version_input_frame.pack(fill='x', expand=True)
 
-        self.supported_version_entry = ttk.Entry(version_input_frame, width=30)
-        self.supported_version_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=(0, 10))
+    #     self.supported_version_entry = ttk.Entry(version_input_frame, width=30)
+    #     self.supported_version_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=(0, 10))
 
-        # Button to open Patches wiki
-        open_patches_btn = ttk.Button(
-            version_input_frame, 
-            text="Open Patches Wiki", 
-            command=lambda: webbrowser.open("https://ck3.paradoxwikis.com/Patches"),
-            style='info.TButton'  # Use an info-styled button
-        )
-        open_patches_btn.pack(side=tk.RIGHT)
+    #     # Button to open Patches wiki
+    #     open_patches_btn = ttk.Button(
+    #         version_input_frame, 
+    #         text="Open Patches Wiki", 
+    #         command=lambda: webbrowser.open("https://ck3.paradoxwikis.com/Patches"),
+    #         style='info.TButton'  # Use an info-styled button
+    #     )
+    #     open_patches_btn.pack(side=tk.RIGHT)
 
-        # Tooltip for Supported Version
-        ttk.Label(supported_version_frame, 
-                  text="Automatically fetched latest version from launcher", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
+    #     # Tooltip for Supported Version
+    #     ttk.Label(supported_version_frame, 
+    #               text="Automatically fetched latest version from launcher", 
+    #               font=('Helvetica', 8), 
+    #               foreground='gray').pack(anchor='w')
 
-        # Mod Tags Section
-        tags_frame = ttk.LabelFrame(self.main_frame, text="Mod Tags", padding="10 10 10 10")
-        tags_frame.pack(fill='x', pady=10)
+    #     # Mod Tags Section
+    #     tags_frame = ttk.LabelFrame(self.main_frame, text="Mod Tags", padding="10 10 10 10")
+    #     tags_frame.pack(fill='x', pady=10)
 
-        # List of mod tags
-        mod_tags = [
-            "Alternative History", "Balance", "Bookmarks", "Character Focuses", 
-            "Character Interactions", "Culture", "Decisions", "Events", "Fixes", 
-            "Gameplay", "Graphics", "Historical", "Map", "Portraits", "Religion", 
-            "Schemes", "Sound", "Total Conversion", "Translation", "Utilities", "Warfare"
-        ]
+    #     # List of mod tags
+    #     mod_tags = [
+    #         "Alternative History", "Balance", "Bookmarks", "Character Focuses", 
+    #         "Character Interactions", "Culture", "Decisions", "Events", "Fixes", 
+    #         "Gameplay", "Graphics", "Historical", "Map", "Portraits", "Religion", 
+    #         "Schemes", "Sound", "Total Conversion", "Translation", "Utilities", "Warfare"
+    #     ]
 
-        # Create a dictionary to store checkbox variables
-        self.mod_tags_vars = {}
+    #     # Create a dictionary to store checkbox variables
+    #     self.mod_tags_vars = {}
 
-        # Create checkboxes in a grid layout
-        for i, tag in enumerate(mod_tags):
-            var = tk.BooleanVar()
-            self.mod_tags_vars[tag] = var
-            cb = ttk.Checkbutton(tags_frame, text=tag, variable=var)
+    #     # Create checkboxes in a grid layout
+    #     for i, tag in enumerate(mod_tags):
+    #         var = tk.BooleanVar()
+    #         self.mod_tags_vars[tag] = var
+    #         cb = ttk.Checkbutton(tags_frame, text=tag, variable=var)
             
-            # Calculate row and column
-            row = i // 3
-            col = i % 3
+    #         # Calculate row and column
+    #         row = i // 3
+    #         col = i % 3
             
-            cb.grid(row=row, column=col, sticky='w', padx=5, pady=2)
+    #         cb.grid(row=row, column=col, sticky='w', padx=5, pady=2)
 
-        # Add some padding at the bottom of the tags frame
-        tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
+    #     # Add some padding at the bottom of the tags frame
+    #     tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
 
-        # Automatically fetch the latest CK3 version
-        self.latest_version = self.get_latest_ck3_version()
+    #     # Automatically fetch the latest CK3 version
+    #     self.latest_version = self.get_latest_ck3_version()
         
-        # Pre-fill the supported version entry
-        if self.latest_version:
-            self.supported_version_entry.insert(0, self.latest_version)
+    #     # Pre-fill the supported version entry
+    #     if self.latest_version:
+    #         self.supported_version_entry.insert(0, self.latest_version)
 
     def get_latest_ck3_version(self):
         try:
