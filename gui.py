@@ -11,11 +11,19 @@ from UI.header_ui import HeaderUI
 from UI.input_sections_ui import InputSectionsUI
 from UI.action_buttons_ui import ActionButtonsUI
 from CK3_utils.game_utils import CK3GameUtils
+from debug.config import is_debug_mode
+from debug.logger import setup_logger
+
 
 class SteamModCreator:
     def __init__(self, root, debug):
         self.root = root
+        self.logger = setup_logger(debug)
         self.debug = debug  # New debug flag
+        
+        # Log initialization
+        self.logger.info(f"Initializing CK3ModCreator in {'DEBUG' if debug else 'PRODUCTION'} mode")
+
         self.root.title("CK3 Mod Creator")
         self.root.geometry("1000x1000")
         self.root.configure(bg='#f0f0f0')
@@ -183,7 +191,10 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
-    app = SteamModCreator(root, debug=True)
+
+     # Dynamically set debug mode
+    debug_mode = is_debug_mode()
+    app = SteamModCreator(root, debug=debug_mode)
     root.mainloop()
 
 if __name__ == "__main__":
