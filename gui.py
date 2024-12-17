@@ -30,15 +30,7 @@ class SteamModCreator:
         HeaderUI.create_header(self.main_frame)
 
         # Steam Path Detection
-        #self.steam_path = self.detect_steam_path()
         self.steam_path = SteamPF.detect_steam_path(self.root)
-
-        # Create Input Sections
-        # self.create_input_sections()
-
-        # Create Action Buttons
-        #self.create_action_buttons()
-
 
         # Create Input Sections
         InputSectionsUI.create_input_sections(self.main_frame, self)
