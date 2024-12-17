@@ -1,6 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 import webbrowser
+from CK3_utils.game_utils import CK3GameUtils
 
 class InputSectionsUI:
     @staticmethod
@@ -99,7 +100,7 @@ class InputSectionsUI:
         tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
 
         # Automatically fetch the latest CK3 version
-        latest_version = parent_class.get_latest_ck3_version()
+        latest_version = CK3GameUtils.get_latest_ck3_version(parent_class.steam_path)
         
         # Pre-fill the supported version entry
         if latest_version:
