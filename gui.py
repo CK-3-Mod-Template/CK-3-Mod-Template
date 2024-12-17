@@ -21,7 +21,7 @@ class SteamModCreator:
         self.debug = debug  # New debug flag
         
         # Log initialization
-        self.logger.info(f"Initializing SteamModCreator in {'DEBUG' if debug else 'PRODUCTION'} mode")
+        self.logger.info(f"Initializing CK3ModCreator in {'DEBUG' if debug else 'PRODUCTION'} mode")
 
         self.root.title("CK3 Mod Creator")
         self.root.geometry("1000x1000")
