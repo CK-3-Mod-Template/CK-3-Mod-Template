@@ -10,6 +10,7 @@ from UI.steam_path_ui import SteamPathUI
 from UI.header_ui import HeaderUI
 from UI.input_sections_ui import InputSectionsUI
 from UI.action_buttons_ui import ActionButtonsUI
+from CK3_utils.game_utils import CK3GameUtils
 
 class SteamModCreator:
     def __init__(self, root, debug):
@@ -32,6 +33,8 @@ class SteamModCreator:
         # Steam Path Detection
         self.steam_path = SteamPF.detect_steam_path(self.root)
 
+        self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+
         # Create Input Sections
         InputSectionsUI.create_input_sections(self.main_frame, self)
 
@@ -45,47 +48,47 @@ class SteamModCreator:
         )
 
 
-    def get_latest_ck3_version(self):
-        try:
-            # Construct the path to the launcher-settings.json
-            launcher_settings_path = os.path.join(
-                self.steam_path, 
-                'steamapps', 
-                'common', 
-                'Crusader Kings III', 
-                'launcher', 
-                'launcher-settings.json'
-            )
+    # def get_latest_ck3_version(self):
+    #     try:
+    #         # Construct the path to the launcher-settings.json
+    #         launcher_settings_path = os.path.join(
+    #             self.steam_path, 
+    #             'steamapps', 
+    #             'common', 
+    #             'Crusader Kings III', 
+    #             'launcher', 
+    #             'launcher-settings.json'
+    #         )
 
-            # Check if the file exists
-            if not os.path.exists(launcher_settings_path):
-                print(f"Launcher settings file not found at: {launcher_settings_path}")
-                return None
+    #         # Check if the file exists
+    #         if not os.path.exists(launcher_settings_path):
+    #             print(f"Launcher settings file not found at: {launcher_settings_path}")
+    #             return None
 
-            # Read the JSON file
-            with open(launcher_settings_path, 'r', encoding='utf-8') as file:
-                settings = json.load(file)
+    #         # Read the JSON file
+    #         with open(launcher_settings_path, 'r', encoding='utf-8') as file:
+    #             settings = json.load(file)
 
-            # Extract the rawVersion
-            version = settings.get('rawVersion')
+    #         # Extract the rawVersion
+    #         version = settings.get('rawVersion')
 
-            if version:
-                print(f"Found CK3 Version: {version}")
-                return version
-            else:
-                print("No rawVersion found in launcher-settings.json")
-                return None
+    #         if version:
+    #             print(f"Found CK3 Version: {version}")
+    #             return version
+    #         else:
+    #             print("No rawVersion found in launcher-settings.json")
+    #             return None
 
-        except Exception as e:
-            # Detailed error logging
-            import traceback
-            print("Full Error Traceback:")
-            traceback.print_exc()
+    #     except Exception as e:
+    #         # Detailed error logging
+    #         import traceback
+    #         print("Full Error Traceback:")
+    #         traceback.print_exc()
             
-            # If there's any error (file reading, parsing, etc.), show a message
-            messagebox.showwarning("Version Fetch Error", 
-                                f"Could not fetch the game version:\n{str(e)}")
-            return None
+    #         # If there's any error (file reading, parsing, etc.), show a message
+    #         messagebox.showwarning("Version Fetch Error", 
+    #                             f"Could not fetch the game version:\n{str(e)}")
+    #         return None
 
     # def create_action_buttons(self):
     #     # Button Frame
