@@ -86,7 +86,8 @@ class ActionButtonsUI:
         open_mod_folder_btn = ttk.Button(
             action_buttons_frame, 
             text="Open Mod Folder", 
-            command=lambda: ActionButtonsUI.open_mod_folder(parent_class),
+            #command=lambda: ActionButtonsUI.open_mod_folder(parent_class),
+            command=lambda: ActionButtonsUI.show_coming_soon_dialog("Open Mod Folder"),
             style='info.TButton'  # Use an info-styled button
         )
         open_mod_folder_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
