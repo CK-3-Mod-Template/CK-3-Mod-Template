@@ -5,6 +5,6 @@ AI generated take a look/*
 **/__pycache__/*
 #**/*.pyc
 # Ignore debug configuration
-debug/debug.ofg
+debug/debug.cfg
 debug/*.log
 logs/
