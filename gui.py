@@ -87,28 +87,28 @@ class SteamModCreator:
                                 f"Could not fetch the game version:\n{str(e)}")
             return None
 
-    def create_action_buttons(self):
-        # Button Frame
-        button_frame = ttk.Frame(self.main_frame)
-        button_frame.pack(fill='x', pady=20)
+    # def create_action_buttons(self):
+    #     # Button Frame
+    #     button_frame = ttk.Frame(self.main_frame)
+    #     button_frame.pack(fill='x', pady=20)
 
-        # Create Mod Button
-        create_button = ttk.Button(
-            button_frame, 
-            text="Create Mod", 
-            command=self.create_mod,
-            style='success.TButton'  # Green success button
-        )
-        create_button.pack(fill='x', pady=(0, 10))
+    #     # Create Mod Button
+    #     create_button = ttk.Button(
+    #         button_frame, 
+    #         text="Create Mod", 
+    #         command=self.create_mod,
+    #         style='success.TButton'  # Green success button
+    #     )
+    #     create_button.pack(fill='x', pady=(0, 10))
 
-        # List Game Files Button
-        list_files_button = ttk.Button(
-            button_frame, 
-            text="List Game Files", 
-            command=self.list_game_files,
-            style='info.TButton'  # Blue info button
-        )
-        list_files_button.pack(fill='x')
+    #     # List Game Files Button
+    #     list_files_button = ttk.Button(
+    #         button_frame, 
+    #         text="List Game Files", 
+    #         command=self.list_game_files,
+    #         style='info.TButton'  # Blue info button
+    #     )
+    #     list_files_button.pack(fill='x')
 
     # def list_game_files(self):
     #     # Construct the path to the Crusader Kings III game directory
