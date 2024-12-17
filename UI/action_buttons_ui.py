@@ -16,7 +16,7 @@ class ActionButtonsUI:
         """
         dialog = tk.Toplevel()
         dialog.title("Coming Soon!")
-        dialog.geometry("400x250")
+        dialog.geometry("700x500")
         dialog.resizable(False, False)
 
         # Create a frame with padding
