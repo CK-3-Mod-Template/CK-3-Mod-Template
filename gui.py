@@ -5,6 +5,12 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
+from steam_finder import SteamPathFinder as SteamPF
+from UI.steam_path_ui import SteamPathUI
+from UI.header_ui import HeaderUI
+from UI.input_sections_ui import InputSectionsUI
+from UI.action_buttons_ui import ActionButtonsUI
+from CK3_utils.game_utils import CK3GameUtils
 
 class SteamModCreator:
     def __init__(self, root, debug):
@@ -22,288 +28,25 @@ class SteamModCreator:
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Header
-        self.create_header()
+        HeaderUI.create_header(self.main_frame)
 
         # Steam Path Detection
-        self.steam_path = self.detect_steam_path()
+        self.steam_path = SteamPF.detect_steam_path(self.root)
+
+        self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
 
         # Create Input Sections
-        self.create_input_sections()
+        InputSectionsUI.create_input_sections(self.main_frame, self)
 
         # Create Action Buttons
-        self.create_action_buttons()
+        ActionButtonsUI.create_action_buttons(self.main_frame, self)
 
         # Steam Path Display
-        self.create_steam_path_display()
-
-    def create_header(self):
-        # Title Label
-        header_label = ttk.Label(
+        SteamPathUI.create_steam_path_display(
             self.main_frame, 
-            text="Crusader Kings III Mod Creator", 
-            font=('Helvetica', 16, 'bold'),
-            foreground='#333333'
+            self.steam_path
         )
-        header_label.pack(pady=(0, 20))
-
-    def create_input_sections(self):
-        # Mod Name Input
-        mod_name_frame = ttk.Frame(self.main_frame)
-        mod_name_frame.pack(fill='x', pady=10)
-
-        ttk.Label(mod_name_frame, text="Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
-        self.mod_name_entry = ttk.Entry(mod_name_frame, width=50)
-        self.mod_name_entry.pack(fill='x', expand=True)
-        
-        # Tooltip for Mod Name
-        ttk.Label(mod_name_frame, 
-                  text="Enter the full name of your mod (e.g., 'Medieval Overhaul')", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
-
-        # Short Mod Name Input
-        short_mod_name_frame = ttk.Frame(self.main_frame)
-        short_mod_name_frame.pack(fill='x', pady=10)
-
-        ttk.Label(short_mod_name_frame, text="Short Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
-        self.short_mod_name_entry = ttk.Entry(short_mod_name_frame, width=30)
-        self.short_mod_name_entry.pack(fill='x', expand=True)
-        
-        # Tooltip for Short Mod Name
-        ttk.Label(short_mod_name_frame, 
-                  text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
-
-        # Supported Version Input
-        supported_version_frame = ttk.Frame(self.main_frame)
-        supported_version_frame.pack(fill='x', pady=10)
-
-        ttk.Label(supported_version_frame, text="Supported Version:", font=('Helvetica', 10)).pack(anchor='w')
-        
-        # Create a frame for entry and button
-        version_input_frame = ttk.Frame(supported_version_frame)
-        version_input_frame.pack(fill='x', expand=True)
-
-        self.supported_version_entry = ttk.Entry(version_input_frame, width=30)
-        self.supported_version_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=(0, 10))
-
-        # Button to open Patches wiki
-        open_patches_btn = ttk.Button(
-            version_input_frame, 
-            text="Open Patches Wiki", 
-            command=lambda: webbrowser.open("https://ck3.paradoxwikis.com/Patches"),
-            style='info.TButton'  # Use an info-styled button
-        )
-        open_patches_btn.pack(side=tk.RIGHT)
-
-        # Tooltip for Supported Version
-        ttk.Label(supported_version_frame, 
-                  text="Automatically fetched latest version from launcher", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
-
-        # Mod Tags Section
-        tags_frame = ttk.LabelFrame(self.main_frame, text="Mod Tags", padding="10 10 10 10")
-        tags_frame.pack(fill='x', pady=10)
-
-        # List of mod tags
-        mod_tags = [
-            "Alternative History", "Balance", "Bookmarks", "Character Focuses", 
-            "Character Interactions", "Culture", "Decisions", "Events", "Fixes", 
-            "Gameplay", "Graphics", "Historical", "Map", "Portraits", "Religion", 
-            "Schemes", "Sound", "Total Conversion", "Translation", "Utilities", "Warfare"
-        ]
-
-        # Create a dictionary to store checkbox variables
-        self.mod_tags_vars = {}
-
-        # Create checkboxes in a grid layout
-        for i, tag in enumerate(mod_tags):
-            var = tk.BooleanVar()
-            self.mod_tags_vars[tag] = var
-            cb = ttk.Checkbutton(tags_frame, text=tag, variable=var)
-            
-            # Calculate row and column
-            row = i // 3
-            col = i % 3
-            
-            cb.grid(row=row, column=col, sticky='w', padx=5, pady=2)
-
-        # Add some padding at the bottom of the tags frame
-        tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
-
-        # Automatically fetch the latest CK3 version
-        self.latest_version = self.get_latest_ck3_version()
-        
-        # Pre-fill the supported version entry
-        if self.latest_version:
-            self.supported_version_entry.insert(0, self.latest_version)
-
-    def get_latest_ck3_version(self):
-        try:
-            # Construct the path to the launcher-settings.json
-            launcher_settings_path = os.path.join(
-                self.steam_path, 
-                'steamapps', 
-                'common', 
-                'Crusader Kings III', 
-                'launcher', 
-                'launcher-settings.json'
-            )
-
-            # Check if the file exists
-            if not os.path.exists(launcher_settings_path):
-                print(f"Launcher settings file not found at: {launcher_settings_path}")
-                return None
-
-            # Read the JSON file
-            with open(launcher_settings_path, 'r', encoding='utf-8') as file:
-                settings = json.load(file)
-
-            # Extract the rawVersion
-            version = settings.get('rawVersion')
-
-            if version:
-                print(f"Found CK3 Version: {version}")
-                return version
-            else:
-                print("No rawVersion found in launcher-settings.json")
-                return None
-
-        except Exception as e:
-            # Detailed error logging
-            import traceback
-            print("Full Error Traceback:")
-            traceback.print_exc()
-            
-            # If there's any error (file reading, parsing, etc.), show a message
-            messagebox.showwarning("Version Fetch Error", 
-                                f"Could not fetch the game version:\n{str(e)}")
-            return None
-
-    def create_action_buttons(self):
-        # Button Frame
-        button_frame = ttk.Frame(self.main_frame)
-        button_frame.pack(fill='x', pady=20)
-
-        # Create Mod Button
-        create_button = ttk.Button(
-            button_frame, 
-            text="Create Mod", 
-            command=self.create_mod,
-            style='success.TButton'  # Green success button
-        )
-        create_button.pack(fill='x', pady=(0, 10))
-
-        # List Game Files Button
-        list_files_button = ttk.Button(
-            button_frame, 
-            text="List Game Files", 
-            command=self.list_game_files,
-            style='info.TButton'  # Blue info button
-        )
-        list_files_button.pack(fill='x')
-
-    def list_game_files(self):
-        # Construct the path to the Crusader Kings III game directory
-        game_dir = os.path.join(self.steam_path, 'steamapps', 'common', 'Crusader Kings III', 'game')
-        
-        # Check if the directory exists
-        if not os.path.exists(game_dir):
-            messagebox.showerror("Error", f"Game directory not found: {game_dir}")
-            return
-
-        # Create a list to store file paths
-        file_list = []
-
-        # Walk through the directory and its subdirectories
-        for root, dirs, files in os.walk(game_dir):
-            for file in files:
-                # Get the full path of the file
-                full_path = os.path.join(root, file)
-                # Get the relative path from the game directory
-                relative_path = os.path.relpath(full_path, game_dir)
-                file_list.append(relative_path)
-
-        # Create a 'data' directory if it doesn't exist
-        data_dir = os.path.join(os.path.dirname(__file__), 'data')
-        os.makedirs(data_dir, exist_ok=True)
-
-        # Define the output file path
-        output_file = os.path.join(data_dir, 'vanilla_files.txt')
-
-        # Write the file list to the text file
-        try:
-            with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(f"Total Files Found: {len(file_list)}\n\n")
-                for file_path in sorted(file_list):
-                    f.write(file_path + "\n")
-            
-            # Show a success message
-            messagebox.showinfo("Success", f"Vanilla files list saved to:\n{output_file}")
-        
-        except Exception as e:
-            # Show an error message if file writing fails
-            messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
-            
-    def create_steam_path_display(self):
-        # Steam Path Frame
-        steam_path_frame = ttk.Frame(self.main_frame)
-        steam_path_frame.pack(fill='x', pady=10)
-
-        ttk.Label(steam_path_frame, text="Steam Installation Path:", font=('Helvetica', 10)).pack(anchor='w')
-        
-        # Scrollable Steam Path
-        steam_path_display = tk.Text(steam_path_frame, height=3, width=50, wrap=tk.WORD)
-        steam_path_display.insert(tk.END, self.steam_path)
-        steam_path_display.config(state=tk.DISABLED)  # Make read-only
-        steam_path_display.pack(fill='x')
-
-    def detect_steam_path(self):
-        try:
-            steam_path = self.find_steam_installation_path()
-            return steam_path
-        except (FileNotFoundError, OSError) as e:
-            # If automatic detection fails, prompt user
-            steam_path = self.prompt_steam_path()
-            return steam_path
-
-    def find_steam_installation_path(self, custom_path=None):
-        if platform.system() == "Windows":
-            try:
-                import winreg
-                reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\Valve\Steam")
-                #reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\WOW6432Node\Valve\Steam")
-                #steam_path, _ = winreg.QueryValueEx(reg_key, "InstallPath")
-                steam_path, _ = winreg.QueryValueEx(reg_key, "SteamPath")
-                winreg.CloseKey(reg_key)
-                return steam_path
-            except FileNotFoundError:
-                raise FileNotFoundError("Steam installation not found in the registry.")
-        elif platform.system() == "Linux":
-            if custom_path and os.path.exists(custom_path):
-                return custom_path
-            common_paths = [
-                os.path.expanduser("~/.steam/steam"),
-                os.path.expanduser("~/.local/share/Steam"),
-                os.path.expanduser("~/Steam"),
-                "/usr/local/games/Steam",
-                "/usr/games/Steam"
-            ]
-            for path in common_paths:
-                if os.path.exists(path):
-                    return path
-            raise FileNotFoundError("Steam installation not found in the default Linux paths.")
-        else:
-            raise OSError("Unsupported operating system")
-
-    def prompt_steam_path(self):
-        steam_path = filedialog.askdirectory(title="Select Steam Installation Directory")
-        if not steam_path:
-            messagebox.showerror("Error", "Steam path is required to proceed.")
-            self.root.quit()
-        return steam_path
+  
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()
@@ -440,7 +183,7 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
-    app = SteamModCreator(root, debug=False)
+    app = SteamModCreator(root, debug=True)
     root.mainloop()
 
 if __name__ == "__main__":
