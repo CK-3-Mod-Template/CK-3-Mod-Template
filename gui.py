@@ -250,17 +250,35 @@ class SteamModCreator:
             messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
             
     def create_steam_path_display(self):
-        # Steam Path Frame
-        steam_path_frame = ttk.Frame(self.main_frame)
-        steam_path_frame.pack(fill='x', pady=10)
+        """
+        Create Steam path display using the SteamPathFinder utility method.
+        """
+        self.steam_path_display = SteamPF.create_steam_path_display(
+            self.main_frame, 
+            self.steam_path
+        )
 
-        ttk.Label(steam_path_frame, text="Steam Installation Path:", font=('Helvetica', 10)).pack(anchor='w')
+    def update_steam_path_display(self):
+        """
+        Update the Steam path display.
+        """
+        SteamPF.update_steam_path_display(
+            self.steam_path_display, 
+            self.steam_path
+        )
+    
+    # def create_steam_path_display(self):
+    #     # Steam Path Frame
+    #     steam_path_frame = ttk.Frame(self.main_frame)
+    #     steam_path_frame.pack(fill='x', pady=10)
+
+    #     ttk.Label(steam_path_frame, text="Steam Installation Path:", font=('Helvetica', 10)).pack(anchor='w')
         
-        # Scrollable Steam Path
-        steam_path_display = tk.Text(steam_path_frame, height=3, width=50, wrap=tk.WORD)
-        steam_path_display.insert(tk.END, self.steam_path)
-        steam_path_display.config(state=tk.DISABLED)  # Make read-only
-        steam_path_display.pack(fill='x')
+    #     # Scrollable Steam Path
+    #     steam_path_display = tk.Text(steam_path_frame, height=3, width=50, wrap=tk.WORD)
+    #     steam_path_display.insert(tk.END, self.steam_path)
+    #     steam_path_display.config(state=tk.DISABLED)  # Make read-only
+    #     steam_path_display.pack(fill='x')
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()
