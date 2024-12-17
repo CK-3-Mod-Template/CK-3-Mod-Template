@@ -6,6 +6,9 @@ import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
 from steam_finder import SteamPathFinder as SteamPF
+from UI.steam_path_ui import SteamPathUI
+from UI.header_ui import HeaderUI
+from UI.input_sections_ui import InputSectionsUI
 
 class SteamModCreator:
     def __init__(self, root, debug):
@@ -35,8 +38,12 @@ class SteamModCreator:
         # Create Action Buttons
         self.create_action_buttons()
 
+
+        # Use UI component classes
+        HeaderUI.create_header(self.main_frame)
+        InputSectionsUI.create_input_sections(self.main_frame, self)
         # Steam Path Display
-        self.steam_path_display = SteamPF.create_steam_path_display(
+        self.steam_path_display = SteamPathUI.create_steam_path_display(
             self.main_frame, 
             self.steam_path
         )
