@@ -1,1 +1,31 @@
+# CK3 Mod Creator - Debug Configuration Guide
+#
+# Debug Mode Activation Instructions:
+# 1. Copy this file to 'debug.cfg' in the same directory
+# 2. Set the value below to 'true' to enable debug mode
+#
+# Debug Mode Options:
+# - 'true': Enables detailed logging and debug features
+# - 'false': Disables debug mode (default production setting)
+#
+# Debug Activation Methods (Prioritized):
+# 1. Environment Variable (Highest Priority)
+#    Run with: CK3_MOD_DEBUG=true python gui.py
+#
+# 2. Debug Configuration File (This file)
+#    Set the value below to 'true'
+#
+# 3. Development IDE Configuration
+#    Set debug flag programmatically when launching the application
+#
+# Debug Features:
+# - Verbose logging to 'logs/' directory
+# - Detailed error tracing
+# - Additional diagnostic information
+#
+# Security Warning:
+# - Debug mode may expose sensitive information
+# - Never use in production environments
+# - Keep debug.cfg out of version control
+
 false
