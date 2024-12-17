@@ -26,7 +26,8 @@ class SteamModCreator:
         self.create_header()
 
         # Steam Path Detection
-        self.steam_path = self.detect_steam_path()
+        #self.steam_path = self.detect_steam_path()
+        self.steam_path = SteamPF.detect_steam_path(self.root)
 
         # Create Input Sections
         self.create_input_sections()
@@ -261,50 +262,50 @@ class SteamModCreator:
         steam_path_display.config(state=tk.DISABLED)  # Make read-only
         steam_path_display.pack(fill='x')
 
-    def detect_steam_path(self):
-        try:
-            steam_path = self.find_steam_installation_path()
-            return steam_path
-        except (FileNotFoundError, OSError) as e:
-            # If automatic detection fails, prompt user
-            steam_path = self.prompt_steam_path()
-            return steam_path
+    # def detect_steam_path(self):
+    #     try:
+    #         steam_path = self.find_steam_installation_path()
+    #         return steam_path
+    #     except (FileNotFoundError, OSError) as e:
+    #         # If automatic detection fails, prompt user
+    #         steam_path = self.prompt_steam_path()
+    #         return steam_path
 
-    def find_steam_installation_path(self, custom_path=None):
-        if platform.system() == "Windows":
-            try:
-                import winreg
-                reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\Valve\Steam")
-                #reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\WOW6432Node\Valve\Steam")
-                #steam_path, _ = winreg.QueryValueEx(reg_key, "InstallPath")
-                steam_path, _ = winreg.QueryValueEx(reg_key, "SteamPath")
-                winreg.CloseKey(reg_key)
-                return steam_path
-            except FileNotFoundError:
-                raise FileNotFoundError("Steam installation not found in the registry.")
-        elif platform.system() == "Linux":
-            if custom_path and os.path.exists(custom_path):
-                return custom_path
-            common_paths = [
-                os.path.expanduser("~/.steam/steam"),
-                os.path.expanduser("~/.local/share/Steam"),
-                os.path.expanduser("~/Steam"),
-                "/usr/local/games/Steam",
-                "/usr/games/Steam"
-            ]
-            for path in common_paths:
-                if os.path.exists(path):
-                    return path
-            raise FileNotFoundError("Steam installation not found in the default Linux paths.")
-        else:
-            raise OSError("Unsupported operating system")
+    # def find_steam_installation_path(self, custom_path=None):
+    #     if platform.system() == "Windows":
+    #         try:
+    #             import winreg
+    #             reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\Valve\Steam")
+    #             #reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"SOFTWARE\WOW6432Node\Valve\Steam")
+    #             #steam_path, _ = winreg.QueryValueEx(reg_key, "InstallPath")
+    #             steam_path, _ = winreg.QueryValueEx(reg_key, "SteamPath")
+    #             winreg.CloseKey(reg_key)
+    #             return steam_path
+    #         except FileNotFoundError:
+    #             raise FileNotFoundError("Steam installation not found in the registry.")
+    #     elif platform.system() == "Linux":
+    #         if custom_path and os.path.exists(custom_path):
+    #             return custom_path
+    #         common_paths = [
+    #             os.path.expanduser("~/.steam/steam"),
+    #             os.path.expanduser("~/.local/share/Steam"),
+    #             os.path.expanduser("~/Steam"),
+    #             "/usr/local/games/Steam",
+    #             "/usr/games/Steam"
+    #         ]
+    #         for path in common_paths:
+    #             if os.path.exists(path):
+    #                 return path
+    #         raise FileNotFoundError("Steam installation not found in the default Linux paths.")
+    #     else:
+    #         raise OSError("Unsupported operating system")
 
-    def prompt_steam_path(self):
-        steam_path = filedialog.askdirectory(title="Select Steam Installation Directory")
-        if not steam_path:
-            messagebox.showerror("Error", "Steam path is required to proceed.")
-            self.root.quit()
-        return steam_path
+    # def prompt_steam_path(self):
+    #     steam_path = filedialog.askdirectory(title="Select Steam Installation Directory")
+    #     if not steam_path:
+    #         messagebox.showerror("Error", "Steam path is required to proceed.")
+    #         self.root.quit()
+    #     return steam_path
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()
@@ -441,7 +442,7 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
-    app = SteamModCreator(root, debug=False)
+    app = SteamModCreator(root, debug=True)
     root.mainloop()
 
 if __name__ == "__main__":
