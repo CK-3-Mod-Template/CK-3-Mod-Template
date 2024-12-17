@@ -5,6 +5,7 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
+from steam_finder import SteamPathFinder as SteamPF
 
 class SteamModCreator:
     def __init__(self, root, debug):
