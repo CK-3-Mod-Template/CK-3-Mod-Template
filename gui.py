@@ -26,37 +26,27 @@ class SteamModCreator:
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Header
-        self.create_header()
+        HeaderUI.create_header(self.main_frame)
 
         # Steam Path Detection
         #self.steam_path = self.detect_steam_path()
         self.steam_path = SteamPF.detect_steam_path(self.root)
 
         # Create Input Sections
-        self.create_input_sections()
+        # self.create_input_sections()
 
         # Create Action Buttons
         self.create_action_buttons()
 
 
         # Use UI component classes
-        HeaderUI.create_header(self.main_frame)
+        
         InputSectionsUI.create_input_sections(self.main_frame, self)
         # Steam Path Display
-        self.steam_path_display = SteamPathUI.create_steam_path_display(
+        SteamPathUI.create_steam_path_display(
             self.main_frame, 
             self.steam_path
         )
-
-    def create_header(self):
-        # Title Label
-        header_label = ttk.Label(
-            self.main_frame, 
-            text="Crusader Kings III Mod Creator", 
-            font=('Helvetica', 16, 'bold'),
-            foreground='#333333'
-        )
-        header_label.pack(pady=(0, 20))
 
     def create_input_sections(self):
         # Mod Name Input
