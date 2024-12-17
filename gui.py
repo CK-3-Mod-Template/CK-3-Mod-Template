@@ -14,6 +14,7 @@ from CK3_utils.game_utils import CK3GameUtils
 from debug.config import is_debug_mode
 from debug.logger import setup_logger
 
+
 class SteamModCreator:
     def __init__(self, root, debug):
         self.root = root
@@ -190,6 +191,7 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
+
      # Dynamically set debug mode
     debug_mode = is_debug_mode()
     app = SteamModCreator(root, debug=debug_mode)
