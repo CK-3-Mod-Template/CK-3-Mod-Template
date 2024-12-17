@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import webbrowser
 import os
+from tkinter import messagebox
 
 class ActionButtonsUI:
     @staticmethod
@@ -86,31 +87,50 @@ class ActionButtonsUI:
     @staticmethod
     def list_game_files(self):
         """
-        List game files and display them in a new window or text area.
+        List game files and save them to a text file.
         """
         try:
-            # Create a new top-level window for game files
-            game_files_window = tk.Toplevel(self.root)
-            game_files_window.title("Game Files")
-            game_files_window.geometry("600x400")
-
-            # Create a text widget to display game files
-            game_files_text = tk.Text(game_files_window, wrap=tk.WORD, font=('Consolas', 10))
-            game_files_text.pack(fill=tk.BOTH, expand=True)
-
-            # Retrieve and display game files
-            game_files = self.get_game_files()  # Assuming this method exists in the parent class
+            # Construct the path to the Crusader Kings III game directory
+            game_dir = os.path.join(self.steam_path, 'steamapps', 'common', 'Crusader Kings III', 'game')
             
-            # Insert game files into the text widget
-            for file_path in game_files:
-                game_files_text.insert(tk.END, f"{file_path}\n")
-            
-            # Make the text widget read-only
-            game_files_text.config(state=tk.DISABLED)
+            # Check if the directory exists
+            if not os.path.exists(game_dir):
+                messagebox.showerror("Error", f"Game directory not found: {game_dir}")
+                self.status_label.config(text=f"Error: Game directory not found", foreground='red')
+                return
 
+            # Create a list to store file paths
+            file_list = []
+
+            # Walk through the directory and its subdirectories
+            for root, dirs, files in os.walk(game_dir):
+                for file in files:
+                    # Get the full path of the file
+                    full_path = os.path.join(root, file)
+                    # Get the relative path from the game directory
+                    relative_path = os.path.relpath(full_path, game_dir)
+                    file_list.append(relative_path)
+
+            # Create a 'data' directory if it doesn't exist
+            data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+            os.makedirs(data_dir, exist_ok=True)
+
+            # Define the output file path
+            output_file = os.path.join(data_dir, 'vanilla_files.txt')
+
+            # Write the file list to the text file
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(f"Total Files Found: {len(file_list)}\n\n")
+                for file_path in sorted(file_list):
+                    f.write(file_path + "\n")
+            
+            # Show a success message
+            messagebox.showinfo("Success", f"Vanilla files list saved to:\n{output_file}")
+            
             # Update status label
-            self.status_label.config(text=f"Listed {len(game_files)} game files", foreground='green')
+            self.status_label.config(text=f"Listed {len(file_list)} game files", foreground='green')
 
         except Exception as e:
-            # Handle any errors in listing game files
+            # Show an error message if file writing fails
+            messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
             self.status_label.config(text=f"Error listing game files: {str(e)}", foreground='red')

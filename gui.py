@@ -110,47 +110,47 @@ class SteamModCreator:
         )
         list_files_button.pack(fill='x')
 
-    def list_game_files(self):
-        # Construct the path to the Crusader Kings III game directory
-        game_dir = os.path.join(self.steam_path, 'steamapps', 'common', 'Crusader Kings III', 'game')
+    # def list_game_files(self):
+    #     # Construct the path to the Crusader Kings III game directory
+    #     game_dir = os.path.join(self.steam_path, 'steamapps', 'common', 'Crusader Kings III', 'game')
         
-        # Check if the directory exists
-        if not os.path.exists(game_dir):
-            messagebox.showerror("Error", f"Game directory not found: {game_dir}")
-            return
+    #     # Check if the directory exists
+    #     if not os.path.exists(game_dir):
+    #         messagebox.showerror("Error", f"Game directory not found: {game_dir}")
+    #         return
 
-        # Create a list to store file paths
-        file_list = []
+    #     # Create a list to store file paths
+    #     file_list = []
 
-        # Walk through the directory and its subdirectories
-        for root, dirs, files in os.walk(game_dir):
-            for file in files:
-                # Get the full path of the file
-                full_path = os.path.join(root, file)
-                # Get the relative path from the game directory
-                relative_path = os.path.relpath(full_path, game_dir)
-                file_list.append(relative_path)
+    #     # Walk through the directory and its subdirectories
+    #     for root, dirs, files in os.walk(game_dir):
+    #         for file in files:
+    #             # Get the full path of the file
+    #             full_path = os.path.join(root, file)
+    #             # Get the relative path from the game directory
+    #             relative_path = os.path.relpath(full_path, game_dir)
+    #             file_list.append(relative_path)
 
-        # Create a 'data' directory if it doesn't exist
-        data_dir = os.path.join(os.path.dirname(__file__), 'data')
-        os.makedirs(data_dir, exist_ok=True)
+    #     # Create a 'data' directory if it doesn't exist
+    #     data_dir = os.path.join(os.path.dirname(__file__), 'data')
+    #     os.makedirs(data_dir, exist_ok=True)
 
-        # Define the output file path
-        output_file = os.path.join(data_dir, 'vanilla_files.txt')
+    #     # Define the output file path
+    #     output_file = os.path.join(data_dir, 'vanilla_files.txt')
 
-        # Write the file list to the text file
-        try:
-            with open(output_file, 'w', encoding='utf-8') as f:
-                f.write(f"Total Files Found: {len(file_list)}\n\n")
-                for file_path in sorted(file_list):
-                    f.write(file_path + "\n")
+    #     # Write the file list to the text file
+    #     try:
+    #         with open(output_file, 'w', encoding='utf-8') as f:
+    #             f.write(f"Total Files Found: {len(file_list)}\n\n")
+    #             for file_path in sorted(file_list):
+    #                 f.write(file_path + "\n")
             
-            # Show a success message
-            messagebox.showinfo("Success", f"Vanilla files list saved to:\n{output_file}")
+    #         # Show a success message
+    #         messagebox.showinfo("Success", f"Vanilla files list saved to:\n{output_file}")
         
-        except Exception as e:
-            # Show an error message if file writing fails
-            messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
+    #     except Exception as e:
+    #         # Show an error message if file writing fails
+    #         messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()
