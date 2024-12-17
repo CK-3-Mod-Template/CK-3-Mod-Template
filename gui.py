@@ -251,16 +251,6 @@ class SteamModCreator:
         except Exception as e:
             # Show an error message if file writing fails
             messagebox.showerror("Error", f"Failed to save file list:\n{str(e)}")
-            
-    def update_steam_path_display(self):
-        """
-        Update the Steam path display.
-        """
-        SteamPF.update_steam_path_display(
-            self.steam_path_display, 
-            self.steam_path
-        )
-    
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()
