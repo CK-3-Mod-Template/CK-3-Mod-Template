@@ -2,10 +2,64 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import webbrowser
 import os
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 from CK3_utils.game_utils import CK3GameUtils
 
 class ActionButtonsUI:
+    @staticmethod
+    def show_coming_soon_dialog(feature_name):
+        """
+        Display a coming soon dialog for unimplemented features.
+        
+        Args:
+            feature_name (str): Name of the feature to be displayed
+        """
+        dialog = tk.Toplevel()
+        dialog.title("Coming Soon!")
+        dialog.geometry("400x250")
+        dialog.resizable(False, False)
+
+        # Create a frame with padding
+        frame = ttk.Frame(dialog, padding="20 20 20 20")
+        frame.pack(fill=tk.BOTH, expand=True)
+
+        # Feature name label
+        title_label = ttk.Label(
+            frame, 
+            text=f"{feature_name} Template", 
+            font=('Helvetica', 16, 'bold')
+        )
+        title_label.pack(pady=(0, 10))
+
+        # Description
+        desc_label = ttk.Label(
+            frame, 
+            text="This feature is currently under development.\n\n"
+                 "We're working hard to bring you innovative modding tools!\n\n"
+                 "Stay tuned for future updates.",
+            wraplength=360,
+            justify=tk.CENTER
+        )
+        desc_label.pack(pady=(0, 20))
+
+        # Roadmap button
+        roadmap_btn = ttk.Button(
+            frame, 
+            text="View Roadmap", 
+            command=lambda: webbrowser.open("https://github.com/YourProject/roadmap"),
+            style='info.TButton'
+        )
+        roadmap_btn.pack(pady=(0, 10))
+
+        # Close button
+        close_btn = ttk.Button(
+            frame, 
+            text="Close", 
+            command=dialog.destroy,
+            style='secondary.TButton'
+        )
+        close_btn.pack()
+
     @staticmethod
     def create_action_buttons(main_frame, parent_class):
         """
@@ -45,6 +99,15 @@ class ActionButtonsUI:
             style='warning.TButton'  # Use a warning-styled button
         )
         list_game_files_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
+
+        # Advanced Mod Tools Button (Template)
+        advanced_tools_btn = ttk.Button(
+            action_buttons_frame, 
+            text="Advanced Mod Tools", 
+            command=lambda: ActionButtonsUI.show_coming_soon_dialog("Advanced Mod Tools"),
+            style='danger.TButton'  # Use a danger-styled button to indicate advanced/experimental features
+        )
+        advanced_tools_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
 
         # Help/Documentation Button
         help_btn = ttk.Button(
