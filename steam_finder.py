@@ -8,8 +8,8 @@ class SteamPathFinder:
     """
     A utility class for finding Steam installation paths across different platforms.
     """
-    @classmethod
-    def detect_steam_path(cls, root=None):
+    @staticmethod
+    def detect_steam_path(root=None):
         """
         Detect the Steam installation path based on the current operating system.
         
@@ -20,12 +20,12 @@ class SteamPathFinder:
             str: Path to the Steam installation.
         """
         try:
-            steam_path = cls.find_steam_installation_path()
+            steam_path = SteamPathFinder.find_steam_installation_path()
             return steam_path
         except (FileNotFoundError, OSError) as e:
             # If automatic detection fails, prompt user
             if root:
-                steam_path = cls.prompt_steam_path(root)
+                steam_path = SteamPathFinder.prompt_steam_path(root)
                 return steam_path
             raise
 
