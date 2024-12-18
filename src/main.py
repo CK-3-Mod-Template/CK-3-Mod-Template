@@ -12,7 +12,7 @@ from src.ui.header_ui import HeaderUI
 from src.ui.input_sections_ui import InputSectionsUI
 from src.ui.action_buttons_ui import ActionButtonsUI
 from src.core.game_utils import CK3GameUtils
-from config.config import is_debug_mode
+from src.utils.debug_utils import is_debug_mode
 from src.utils.logger import setup_logger
 
 class SteamModCreator:
