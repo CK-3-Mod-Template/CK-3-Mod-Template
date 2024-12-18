@@ -1,3 +1,4 @@
+import imp
 import os
 import platform
 import tkinter as tk
@@ -5,6 +6,7 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
+import re
 from src.core.steam_finder import SteamPathFinder as SteamPF
 from src.ui.steam_path_ui import SteamPathUI
 from src.ui.header_ui import HeaderUI
