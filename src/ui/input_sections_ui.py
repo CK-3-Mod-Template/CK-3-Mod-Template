@@ -23,7 +23,7 @@ class InputSectionsUI:
         
         # Tooltip for Mod Name
         ttk.Label(mod_name_frame, 
-                  text="Enter the full name of your mod (e.g., 'Medieval Overhaul')", 
+                  text="Enter the full name of your mod (e.g., 'Mass Recruit from Prison')", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
@@ -37,7 +37,7 @@ class InputSectionsUI:
         
         # Tooltip for Short Mod Name
         ttk.Label(short_mod_name_frame, 
-                  text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
+                  text="Enter a short, unique identifier for your mod (e.g., 'mrfp')", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
