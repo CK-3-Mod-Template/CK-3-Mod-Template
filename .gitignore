@@ -1,4 +1,4 @@
-data/vanilla_files.txt
+src/data/vanilla_files.txt
 venv/*
 AI generated take a look/*
 **/pycache/*

@@ -5,12 +5,13 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
-from steam_finder import SteamPathFinder as SteamPF
-from UI.steam_path_ui import SteamPathUI
-from UI.header_ui import HeaderUI
-from UI.input_sections_ui import InputSectionsUI
-from UI.action_buttons_ui import ActionButtonsUI
-from CK3_utils.game_utils import CK3GameUtils
+import re
+from src.core.steam_finder import SteamPathFinder as SteamPF
+from src.ui.steam_path_ui import SteamPathUI
+from src.ui.header_ui import HeaderUI
+from src.ui.input_sections_ui import InputSectionsUI
+from src.ui.action_buttons_ui import ActionButtonsUI
+from src.core.game_utils import CK3GameUtils
 from debug.config import is_debug_mode
 from debug.logger import setup_logger
 
@@ -20,7 +21,13 @@ class SteamModCreator:
         self.root = root
         self.logger = setup_logger(debug)
         self.debug = debug  # New debug flag
-        
+
+        # Initialize entry attributes before creating input sections
+        self.mod_name_entry = None
+        self.short_mod_name_entry = None
+        self.supported_version_entry = None
+        self.mod_tags_vars = {}
+
         # Log initialization
         self.logger.info(f"Initializing CK3ModCreator in {'DEBUG' if debug else 'PRODUCTION'} mode")
 
@@ -54,11 +61,40 @@ class SteamModCreator:
             self.main_frame, 
             self.steam_path
         )
-  
+    
+    def validate_short_mod_name(self, short_mod_name):
+        # Load blocked names from JSON
+        with open(os.path.join(os.path.dirname(__file__), 'src/data/blocked_short_mod_names.json'), 'r') as file:
+            data = json.load(file)
+            BLOCKED_SHORT_MOD_NAMES = data['BLOCKED_SHORT_MOD_NAMES']
+
+        # Comprehensive validation checks
+        if not short_mod_name:
+            messagebox.showerror("Invalid Mod Name", "Short mod name cannot be empty.")
+            return False
+
+        if short_mod_name in BLOCKED_SHORT_MOD_NAMES:
+            messagebox.showerror("Invalid Mod Name", 
+                                f"The short mod name '{short_mod_name}' is already in use and cannot be used.")
+            return False
+
+        # Check for valid characters (lowercase, numbers, underscores)
+        if not re.match(r'^[a-z0-9_]+$', short_mod_name):
+            messagebox.showerror("Invalid Mod Name", 
+                                "Short mod name must contain only lowercase letters, numbers, and underscores.")
+            return False
+
+        # Length constraints
+        if len(short_mod_name) < 3 or len(short_mod_name) > 30:
+            messagebox.showerror("Invalid Mod Name", 
+                                "Short mod name must be between 3 and 30 characters long.")
+            return False
+
+        return True
 
     def create_mod(self):
-        mod_name = self.mod_name_entry.get().strip()
-        short_mod_name = self.short_mod_name_entry.get().strip()
+        mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
+        short_mod_name = self.short_mod_name_entry.get().strip() if self.short_mod_name_entry else ""
 
         if not mod_name or not short_mod_name:
             messagebox.showerror("Error", "Please enter both Mod Name and Short Mod Name")
@@ -68,16 +104,8 @@ class SteamModCreator:
         if ' ' in short_mod_name:
             messagebox.showerror("Error", "Short Mod Name cannot contain spaces")
             return
-        # Add this at the beginning of the create_mod method
-        with open(os.path.join(os.path.dirname(__file__), 'blocked_short_mod_names.json'), 'r') as file:
-            data = json.load(file)
-            BLOCKED_SHORT_MOD_NAMES = data['BLOCKED_SHORT_MOD_NAMES']
+        self.validate_short_mod_name(short_mod_name)
 
-        # Add this validation before creating the mod
-        if short_mod_name in BLOCKED_SHORT_MOD_NAMES:
-            messagebox.showerror("Invalid Mod Name", 
-                                f"The short mod name '{short_mod_name}' is already in use and cannot be used.")
-            return
 
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
@@ -86,7 +114,7 @@ class SteamModCreator:
             selected_tags = ["Fixes"]
 
         # Get the supported version from the entry
-        supported_version = self.supported_version_entry.get().strip()
+        supported_version = self.supported_version_entry.get().strip() if self.supported_version_entry else ""
 
         try:
             # Determine mod paths based on debug flag

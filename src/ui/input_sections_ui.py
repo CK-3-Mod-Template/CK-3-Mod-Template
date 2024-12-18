@@ -1,7 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 import webbrowser
-from CK3_utils.game_utils import CK3GameUtils
+from src.core.game_utils import CK3GameUtils
 
 class InputSectionsUI:
     @staticmethod
@@ -23,7 +23,7 @@ class InputSectionsUI:
         
         # Tooltip for Mod Name
         ttk.Label(mod_name_frame, 
-                  text="Enter the full name of your mod (e.g., 'Medieval Overhaul')", 
+                  text="Enter the full name of your mod (e.g., 'Mass Recruit from Prison')", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
@@ -37,7 +37,7 @@ class InputSectionsUI:
         
         # Tooltip for Short Mod Name
         ttk.Label(short_mod_name_frame, 
-                  text="Enter a short, unique identifier for your mod (e.g., 'medieval_overhaul')", 
+                  text="Enter a short, unique identifier for your mod (e.g., 'mrfp')", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
@@ -100,7 +100,7 @@ class InputSectionsUI:
         tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
 
         # Automatically fetch the latest CK3 version
-        latest_version = CK3GameUtils.get_latest_ck3_version(parent_class.steam_path)
+        latest_version = parent_class.latest_version
         
         # Pre-fill the supported version entry
         if latest_version:
