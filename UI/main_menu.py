@@ -149,40 +149,6 @@ class MainMenu:
             for file in edited_files:
                 files_listbox.insert(tk.END, file)
 
-    def show_help_page(self):
-        """
-        Help and resources page
-        """
-        help_frame = ttk.Frame(self.root)
-        help_frame.pack(fill=tk.BOTH, expand=True)
-        
-        help_text = """
-        CK3 Mod Creator - Help & Resources
-
-        Quick Links:
-        - Official Wiki
-        - Community Discord
-        - Modding Tutorials
-        """
-        
-        help_label = ttk.Label(help_frame, text=help_text, wraplength=500)
-        help_label.pack(pady=20)
-        
-        # Links
-        links = [
-            ("Open Wiki", "https://example.com/wiki"),
-            ("Join Discord", "https://discord.gg/example"),
-            ("Modding Tutorials", "https://example.com/tutorials")
-        ]
-        
-        for text, url in links:
-            link_btn = ttk.Button(
-                help_frame, 
-                text=text, 
-                command=lambda u=url: webbrowser.open(u)
-            )
-            link_btn.pack(pady=5)
-
     def show_mod_management_page(self):
         """
         Mod management interface
@@ -208,41 +174,6 @@ class MainMenu:
         
         for detail in details:
             ttk.Label(details_frame, text=detail).pack(anchor='w')
-
-    def show_settings_page(self):
-        """
-        Application settings page
-        """
-        settings_frame = ttk.Frame(self.root)
-        settings_frame.pack(fill=tk.BOTH, expand=True)
-        
-        ttk.Label(settings_frame, text="Application Settings", font=("Helvetica", 14)).pack(pady=10)
-        
-        # Debug Mode Toggle
-        debug_var = tk.BooleanVar(value=self.parent_app.debug)
-        debug_check = ttk.Checkbutton(
-            settings_frame, 
-            text="Enable Debug Mode", 
-            variable=debug_var,
-            command=lambda: self.toggle_debug_mode(debug_var.get())
-        )
-        debug_check.pack(pady=10)
-        
-        # Theme Selection
-        theme_label = ttk.Label(settings_frame, text="Select Theme:")
-        theme_label.pack(pady=(10, 0))
-        
-        themes = ['flatly', 'darkly', 'cosmo', 'journal', 'litera']
-        theme_var = tk.StringVar(value=self.style.theme_use())
-        theme_dropdown = ttk.Combobox(
-            settings_frame, 
-            textvariable=theme_var, 
-            values=themes,
-            state="readonly"
-        )
-        theme_dropdown.pack(pady=10)
-        theme_dropdown.bind('<<ComboboxSelected>>', 
-                             lambda e: self.change_theme(theme_var.get()))
 
     def toggle_debug_mode(self, debug_state):
         """
@@ -276,3 +207,149 @@ class MainMenu:
         
         # Recreate main menu to update button states
         self.create_main_menu()
+
+    def create_base_window(self, title):
+        """
+        Create a base window with a back button to main menu
+        
+        :param title: Title of the window
+        :return: Tuple of (window, main_frame)
+        """
+        # Create a new top-level window
+        window = tk.Toplevel(self.root)
+        window.title(title)
+        window.geometry("800x600")
+        window.grab_set()  # Make this window modal
+        
+        # Main frame for content
+        main_frame = ttk.Frame(window, padding="20 20 20 20")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Back to Main Menu button
+        back_btn = ttk.Button(
+            main_frame, 
+            text="← Back to Main Menu", 
+            command=lambda: self.return_to_main_menu(window),
+            style='secondary.TButton'
+        )
+        back_btn.pack(side=tk.BOTTOM, pady=10)
+        
+        return window, main_frame
+    
+    def return_to_main_menu(self, current_window):
+        """
+        Close current window and recreate main menu
+        
+        :param current_window: Window to close
+        """
+        current_window.destroy()
+        self.create_main_menu()
+
+    def show_help_page(self):
+        """
+        Open a separate window for Help & Resources
+        """
+        # Create base window
+        help_window, help_frame = self.create_base_window("Help & Resources")
+        
+        # Title
+        title_label = ttk.Label(
+            help_frame, 
+            text="CK3 Mod Creator - Help & Resources", 
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+        
+        # Help sections
+        help_sections = [
+            ("Getting Started", 
+             "Learn how to create and manage your CK3 mods step by step."),
+            ("Modding Basics", 
+             "Understand the fundamentals of Crusader Kings III modding."),
+            ("Advanced Techniques", 
+             "Explore advanced modding techniques and best practices.")
+        ]
+        
+        for section_title, section_desc in help_sections:
+            section_frame = ttk.Frame(help_frame)
+            section_frame.pack(fill='x', pady=5)
+            
+            ttk.Label(section_frame, text=section_title, font=("Helvetica", 12, "bold")).pack(anchor='w')
+            ttk.Label(section_frame, text=section_desc, wraplength=600).pack(anchor='w')
+        
+        # External Links
+        links_frame = ttk.Frame(help_frame)
+        links_frame.pack(pady=20)
+        
+        links = [
+            ("Official Wiki", "https://example.com/ck3-wiki"),
+            ("Modding Discord", "https://discord.gg/ck3modding"),
+            ("Tutorial Videos", "https://youtube.com/ck3modding")
+        ]
+        
+        for text, url in links:
+            link_btn = ttk.Button(
+                links_frame, 
+                text=text, 
+                command=lambda u=url: webbrowser.open(u),
+                style='info.TButton'
+            )
+            link_btn.pack(side=tk.LEFT, padx=10)
+
+    def show_settings_page(self):
+        """
+        Open a separate window for Application Settings
+        """
+        # Create base window
+        settings_window, settings_frame = self.create_base_window("Application Settings")
+        
+        # Title
+        title_label = ttk.Label(
+            settings_frame, 
+            text="CK3 Mod Creator - Settings", 
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+        
+        # Debug Mode Section
+        debug_frame = ttk.Frame(settings_frame)
+        debug_frame.pack(fill='x', pady=10)
+        
+        ttk.Label(debug_frame, text="Debug Mode", font=("Helvetica", 12, "bold")).pack(anchor='w')
+        
+        debug_var = tk.BooleanVar(value=self.parent_app.debug)
+        debug_check = ttk.Checkbutton(
+            debug_frame, 
+            text="Enable Detailed Logging", 
+            variable=debug_var,
+            command=lambda: self.toggle_debug_mode(debug_var.get())
+        )
+        debug_check.pack(anchor='w')
+        
+        # Theme Selection Section
+        theme_frame = ttk.Frame(settings_frame)
+        theme_frame.pack(fill='x', pady=10)
+        
+        ttk.Label(theme_frame, text="Application Theme", font=("Helvetica", 12, "bold")).pack(anchor='w')
+        
+        themes = ['flatly', 'darkly', 'cosmo', 'journal', 'litera']
+        theme_var = tk.StringVar(value=self.style.theme_use())
+        theme_dropdown = ttk.Combobox(
+            theme_frame, 
+            textvariable=theme_var, 
+            values=themes,
+            state="readonly",
+            width=30
+        )
+        theme_dropdown.pack(anchor='w', pady=5)
+        theme_dropdown.bind('<<ComboboxSelected>>', 
+                             lambda e: self.change_theme(theme_var.get()))
+        
+        # Mod Creation Preferences
+        mod_pref_frame = ttk.Frame(settings_frame)
+        mod_pref_frame.pack(fill='x', pady=10)
+        
+        ttk.Label(mod_pref_frame, text="Mod Creation Preferences", font=("Helvetica", 12, "bold")).pack(anchor='w')
+        
+        # Placeholder for future mod creation preferences
+        ttk.Label(mod_pref_frame, text="More preferences coming soon!").pack(anchor='w')
