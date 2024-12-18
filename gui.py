@@ -104,7 +104,8 @@ class SteamModCreator:
         if ' ' in short_mod_name:
             messagebox.showerror("Error", "Short Mod Name cannot contain spaces")
             return
-        self.validate_short_mod_name(short_mod_name)
+        if not self.validate_short_mod_name(short_mod_name):
+            return
 
 
         # Collect selected tags
