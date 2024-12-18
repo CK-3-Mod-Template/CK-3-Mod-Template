@@ -1,7 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 import webbrowser
-from CK3_utils.game_utils import CK3GameUtils
+from src.core.game_utils import CK3GameUtils
 
 class InputSectionsUI:
     @staticmethod

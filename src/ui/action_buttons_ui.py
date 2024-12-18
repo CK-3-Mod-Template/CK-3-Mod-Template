@@ -3,7 +3,7 @@ import ttkbootstrap as ttk
 import webbrowser
 import os
 from tkinter import messagebox, simpledialog
-from CK3_utils.game_utils import CK3GameUtils
+from src.core.game_utils import CK3GameUtils
 
 class ActionButtonsUI:
     @staticmethod
