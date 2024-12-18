@@ -61,10 +61,16 @@ class MainMenu:
             self.parent_app.steam_path
         )
 
-    def return_to_main_menu(self):
+    def return_to_main_menu(self, current_window=None):
         """
         Return to the main menu from any page
+        
+        :param current_window: Optional window to destroy before returning to main menu
         """
+        # Destroy the current window if provided
+        if current_window and isinstance(current_window, tk.Toplevel):
+            current_window.destroy()
+        
         # Clear current view
         for widget in self.root.winfo_children():
             widget.destroy()
@@ -206,15 +212,6 @@ class MainMenu:
         back_btn.pack(side=tk.BOTTOM, pady=10)
         
         return window, main_frame
-    
-    def return_to_main_menu(self, current_window):
-        """
-        Close current window and recreate main menu
-        
-        :param current_window: Window to close
-        """
-        current_window.destroy()
-        self.create_main_menu()
 
     def show_help_page(self):
         """
