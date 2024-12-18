@@ -93,8 +93,8 @@ class SteamModCreator:
         return True
 
     def create_mod(self):
-        mod_name = self.mod_name_entry.get().strip()
-        short_mod_name = self.short_mod_name_entry.get().strip()
+        mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
+        short_mod_name = self.short_mod_name_entry.get().strip() if self.short_mod_name_entry else ""
 
         if not mod_name or not short_mod_name:
             messagebox.showerror("Error", "Please enter both Mod Name and Short Mod Name")
@@ -114,7 +114,7 @@ class SteamModCreator:
             selected_tags = ["Fixes"]
 
         # Get the supported version from the entry
-        supported_version = self.supported_version_entry.get().strip()
+        supported_version = self.supported_version_entry.get().strip() if self.supported_version_entry else ""
 
         try:
             # Determine mod paths based on debug flag
