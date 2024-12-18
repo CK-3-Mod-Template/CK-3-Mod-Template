@@ -13,6 +13,7 @@ from UI.action_buttons_ui import ActionButtonsUI
 from CK3_utils.game_utils import CK3GameUtils
 from debug.config import is_debug_mode
 from debug.logger import setup_logger
+from UI.main_menu import MainMenu
 
 
 class SteamModCreator:
@@ -54,7 +55,13 @@ class SteamModCreator:
             self.main_frame, 
             self.steam_path
         )
-  
+
+        # Create MainMenu instance
+        self.main_menu = MainMenu(self.root, self)
+
+        # Start with main menu instead of direct mod creation UI
+        self.main_menu.create_main_menu()
+
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()

@@ -68,9 +68,25 @@ class MainMenu:
         for widget in self.root.winfo_children():
             widget.destroy()
         
-        # Reinitialize mod creation UI from parent app
-        self.parent_app.create_input_sections()
-        self.parent_app.create_action_buttons()
+        # Recreate the entire original mod creation UI using existing UI methods
+        from UI.header_ui import HeaderUI
+        from UI.input_sections_ui import InputSectionsUI
+        from UI.action_buttons_ui import ActionButtonsUI
+        from UI.steam_path_ui import SteamPathUI
+
+        # Recreate main frame
+        main_frame = ttk.Frame(self.root, padding="20 20 20 20")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        self.parent_app.main_frame = main_frame
+
+        # Recreate all UI components using existing methods
+        HeaderUI.create_header(main_frame)
+        InputSectionsUI.create_input_sections(main_frame, self.parent_app)
+        ActionButtonsUI.create_action_buttons(main_frame, self.parent_app)
+        SteamPathUI.create_steam_path_display(
+            main_frame, 
+            self.parent_app.steam_path
+        )
 
     def show_update_mod_page(self):
         """
