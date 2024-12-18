@@ -43,6 +43,15 @@ class MainMenu:
         main_frame.pack(fill=tk.BOTH, expand=True)
         self.parent_app.main_frame = main_frame
 
+        # Back to Main Menu button
+        back_btn = ttk.Button(
+            main_frame, 
+            text="← Back to Main Menu", 
+            command=self.return_to_main_menu,
+            style='secondary.TButton'
+        )
+        back_btn.pack(side=tk.BOTTOM, pady=10)
+
         # Recreate all UI components using existing methods
         HeaderUI.create_header(main_frame)
         InputSectionsUI.create_input_sections(main_frame, self.parent_app)
@@ -52,6 +61,17 @@ class MainMenu:
             self.parent_app.steam_path
         )
 
+    def return_to_main_menu(self):
+        """
+        Return to the main menu from any page
+        """
+        # Clear current view
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        
+        # Recreate main menu
+        self.create_main_menu()
+        
     def show_update_mod_page(self):
         """
         Page for updating an existing mod
@@ -304,8 +324,6 @@ class MainMenu:
         
         # Placeholder for future mod creation preferences
         ttk.Label(mod_pref_frame, text="More preferences coming soon!").pack(anchor='w')
-
-
 
     def show_mod_tools_page(self):
         """

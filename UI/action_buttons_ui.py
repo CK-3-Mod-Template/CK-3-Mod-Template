@@ -86,8 +86,7 @@ class ActionButtonsUI:
         open_mod_folder_btn = ttk.Button(
             action_buttons_frame, 
             text="Open Mod Folder", 
-            #command=lambda: ActionButtonsUI.open_mod_folder(parent_class),
-            command=lambda: ActionButtonsUI.show_coming_soon_dialog("Open Mod Folder"),
+            command=lambda: ActionButtonsUI.open_mod_folder(parent_class),
             style='info.TButton'  # Use an info-styled button
         )
         open_mod_folder_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
@@ -96,16 +95,16 @@ class ActionButtonsUI:
         list_game_files_btn = ttk.Button(
             action_buttons_frame, 
             text="List Game Files", 
-            command=lambda: CK3GameUtils.list_game_files(parent_class.steam_path),
+            command=lambda: ActionButtonsUI.list_game_files(parent_class),
             style='warning.TButton'  # Use a warning-styled button
         )
         list_game_files_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
 
-        # Advanced Mod Tools Button (Template)
+        # Advanced Mod Tools Button
         advanced_tools_btn = ttk.Button(
             action_buttons_frame, 
             text="Advanced Mod Tools", 
-            command=lambda: ActionButtonsUI.show_coming_soon_dialog("Advanced Mod Tools"),
+            command=lambda: ActionButtonsUI.show_advanced_mod_tools(parent_class),
             style='danger.TButton'  # Use a danger-styled button to indicate advanced/experimental features
         )
         advanced_tools_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
@@ -129,7 +128,177 @@ class ActionButtonsUI:
         parent_class.status_label.pack(pady=10)
 
     @staticmethod
-    def open_mod_folder(self):
+    def open_mod_folder(parent_class):
+        """
+        Open the mod folder in the default file explorer.
+        
+        Args:
+            parent_class (SteamModCreator): Reference to the main class
+        """
+        try:
+            # Attempt to get mod directory from main menu
+            if hasattr(parent_class, 'main_menu') and parent_class.main_menu.mod_created:
+                mod_directory = parent_class.main_menu.current_mod_path
+            else:
+                # Fallback to default mod directory
+                mod_directory = os.path.join(os.path.expanduser('~'), 'Documents', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+            
+            # Ensure the directory exists
+            os.makedirs(mod_directory, exist_ok=True)
+            
+            # Open the directory in the default file explorer
+            os.startfile(mod_directory)
+            
+            # Update status label if available
+            if hasattr(parent_class, 'status_label'):
+                parent_class.status_label.config(
+                    text=f"Opened Mod Folder: {mod_directory}", 
+                    foreground='green'
+                )
+        except Exception as e:
+            # Handle any errors 
+            if hasattr(parent_class, 'status_label'):
+                parent_class.status_label.config(
+                    text=f"Error opening mod folder: {str(e)}", 
+                    foreground='red'
+                )
+            messagebox.showerror("Error", f"Could not open mod folder: {str(e)}")
+
+    @staticmethod
+    def list_game_files(parent_class):
+        """
+        List game files using CK3GameUtils
+        
+        Args:
+            parent_class (SteamModCreator): Reference to the main class
+        """
+        from CK3_utils.game_utils import CK3GameUtils
+        
+        # Create a new window to display game files
+        files_window = tk.Toplevel()
+        files_window.title("Game Files")
+        files_window.geometry("800x600")
+        
+        # Listbox to show files
+        files_listbox = tk.Listbox(files_window, width=100)
+        files_listbox.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        
+        try:
+            # Get game files
+            game_files = CK3GameUtils.list_game_files(parent_class.steam_path)
+            
+            if not game_files:
+                files_listbox.insert(tk.END, "No game files found.")
+            else:
+                for file in game_files:
+                    files_listbox.insert(tk.END, file)
+            
+            # Update status label if available
+            if hasattr(parent_class, 'status_label'):
+                parent_class.status_label.config(
+                    text=f"Listed {len(game_files)} game files", 
+                    foreground='green'
+                )
+        except Exception as e:
+            files_listbox.insert(tk.END, f"Error listing game files: {str(e)}")
+            
+            # Update status label if available
+            if hasattr(parent_class, 'status_label'):
+                parent_class.status_label.config(
+                    text=f"Error listing game files: {str(e)}", 
+                    foreground='red'
+                )
+
+    @staticmethod
+    def show_advanced_mod_tools(parent_class):
+        """
+        Show advanced mod tools dialog
+        
+        Args:
+            parent_class (SteamModCreator): Reference to the main class
+        """
+        # Create advanced tools dialog
+        tools_dialog = tk.Toplevel()
+        tools_dialog.title("Advanced Mod Tools")
+        tools_dialog.geometry("600x400")
+        
+        # Tools frame
+        tools_frame = ttk.Frame(tools_dialog, padding="20 20 20 20")
+        tools_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Tool sections
+        tools = [
+            ("Mod File Explorer", 
+             "Browse and manage mod-related files", 
+             lambda: ActionButtonsUI.open_mod_folder(parent_class)),
+            ("List Game Files", 
+             "Explore and analyze game files", 
+             lambda: ActionButtonsUI.list_game_files(parent_class)),
+            ("Mod Validation", 
+             "Check mod compatibility", 
+             ActionButtonsUI.validate_mod),
+            ("File Comparison", 
+             "Compare vanilla and modded files", 
+             ActionButtonsUI.show_file_comparison)
+        ]
+        
+        for title, description, command in tools:
+            tool_frame = ttk.Frame(tools_frame)
+            tool_frame.pack(fill='x', pady=5)
+            
+            tool_btn = ttk.Button(
+                tool_frame, 
+                text=title, 
+                command=command,
+                style='primary.TButton'
+            )
+            tool_btn.pack(side=tk.LEFT, padx=(0, 10))
+            
+            ttk.Label(tool_frame, text=description, wraplength=400).pack(side=tk.LEFT)
+
+    @staticmethod
+    def validate_mod():
+        """
+        Validate mod for potential issues
+        """
+        # Create validation window
+        val_window = tk.Toplevel()
+        val_window.title("Mod Validation")
+        val_window.geometry("600x400")
+        
+        # Results frame
+        results_frame = ttk.Frame(val_window)
+        results_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        
+        # Results label
+        results_label = ttk.Label(
+            results_frame, 
+            text="Mod Validation Results", 
+            font=("Helvetica", 14, "bold")
+        )
+        results_label.pack(pady=(0, 10))
+        
+        # Listbox for validation results
+        results_listbox = tk.Listbox(results_frame, width=70)
+        results_listbox.pack(fill=tk.BOTH, expand=True)
+        
+        # Placeholder validation logic
+        validation_results = []
+        
+        if not validation_results:
+            results_listbox.insert(tk.END, "No mod loaded. Create a mod first.")
+        else:
+            for result in validation_results:
+                results_listbox.insert(tk.END, result)
+
+    @staticmethod
+    def show_file_comparison():
+        """
+        Show file comparison tool (placeholder)
+        """
+        messagebox.showinfo("File Comparison", 
+                            "File comparison tool is coming soon!\n"
+                            "This will help you compare vanilla and modded files.")
         """
         Open the mod folder in the default file explorer.
         """
