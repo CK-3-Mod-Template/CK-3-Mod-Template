@@ -5,12 +5,12 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
-from steam_finder import SteamPathFinder as SteamPF
-from UI.steam_path_ui import SteamPathUI
-from UI.header_ui import HeaderUI
-from UI.input_sections_ui import InputSectionsUI
-from UI.action_buttons_ui import ActionButtonsUI
-from CK3_utils.game_utils import CK3GameUtils
+from src.core.steam_finder import SteamPathFinder as SteamPF
+from src.ui.steam_path_ui import SteamPathUI
+from src.ui.header_ui import HeaderUI
+from src.ui.input_sections_ui import InputSectionsUI
+from src.ui.action_buttons_ui import ActionButtonsUI
+from src.core.game_utils import CK3GameUtils
 from debug.config import is_debug_mode
 from debug.logger import setup_logger
 
@@ -54,7 +54,17 @@ class SteamModCreator:
             self.main_frame, 
             self.steam_path
         )
-  
+    
+    def validate_short_mod_name(self, short_mod_name):
+        with open(os.path.join(os.path.dirname(__file__), 'blocked_short_mod_names.json'), 'r') as file:
+            data = json.load(file)
+            BLOCKED_SHORT_MOD_NAMES = data['BLOCKED_SHORT_MOD_NAMES']
+
+        if short_mod_name in BLOCKED_SHORT_MOD_NAMES:
+            messagebox.showerror("Invalid Mod Name", 
+                                f"The short mod name '{short_mod_name}' is already in use and cannot be used.")
+            return False
+        return True
 
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip()
@@ -68,16 +78,8 @@ class SteamModCreator:
         if ' ' in short_mod_name:
             messagebox.showerror("Error", "Short Mod Name cannot contain spaces")
             return
-        # Add this at the beginning of the create_mod method
-        with open(os.path.join(os.path.dirname(__file__), 'blocked_short_mod_names.json'), 'r') as file:
-            data = json.load(file)
-            BLOCKED_SHORT_MOD_NAMES = data['BLOCKED_SHORT_MOD_NAMES']
+        self.validate_short_mod_name(short_mod_name)
 
-        # Add this validation before creating the mod
-        if short_mod_name in BLOCKED_SHORT_MOD_NAMES:
-            messagebox.showerror("Invalid Mod Name", 
-                                f"The short mod name '{short_mod_name}' is already in use and cannot be used.")
-            return
 
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
