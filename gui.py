@@ -20,7 +20,13 @@ class SteamModCreator:
         self.root = root
         self.logger = setup_logger(debug)
         self.debug = debug  # New debug flag
-        
+
+        # Initialize entry attributes before creating input sections
+        self.mod_name_entry = None
+        self.short_mod_name_entry = None
+        self.supported_version_entry = None
+        self.mod_tags_vars = {}
+
         # Log initialization
         self.logger.info(f"Initializing CK3ModCreator in {'DEBUG' if debug else 'PRODUCTION'} mode")
 
