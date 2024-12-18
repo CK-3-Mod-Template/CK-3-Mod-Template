@@ -100,7 +100,7 @@ class InputSectionsUI:
         tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
 
         # Automatically fetch the latest CK3 version
-        latest_version = CK3GameUtils.get_latest_ck3_version(parent_class.steam_path)
+        latest_version = parent_class.latest_version
         
         # Pre-fill the supported version entry
         if latest_version:
