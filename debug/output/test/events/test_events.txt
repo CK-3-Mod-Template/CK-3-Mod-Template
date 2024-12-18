@@ -1,9 +1,0 @@
-﻿namespace = test_error_suppression
-
-test_error_suppression.0001 = {
-  hidden = yes
-  orphan = yes
-  trigger = {
-    exists = global_var:test_is_loaded
-  }
-}
