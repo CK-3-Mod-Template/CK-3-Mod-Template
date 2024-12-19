@@ -195,8 +195,7 @@ class SteamModCreator:
                                 content = source_file.read()
                             
                             # Replace placeholders
-                            content = content.replace('<your_mod_name_here>', short_mod_name)
-                            content = content.replace('<your_long_mod_name_here>', mod_name)
+                            content = content.replace('<your_mod_name_here>', short_mod_name).replace('<your_long_mod_name_here>', mod_name)
                             
                             # Write to destination
                             with open(d, 'w', encoding='utf-8') as dest_file:
