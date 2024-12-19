@@ -152,7 +152,6 @@ class SteamModCreator:
         # Show success message
         messagebox.showinfo("Mod Created", f"Mod '{mod_name}' created successfully in {mod_creation_result['mod_folder_path']}")
 
-    # Add this method to the SteamModCreator class if not already present
     def update_status_label(self, message, is_error=False):
         """
         Update the status label with a message.
@@ -161,11 +160,22 @@ class SteamModCreator:
             message (str): Message to display
             is_error (bool, optional): Whether the message is an error. Defaults to False.
         """
-        if hasattr(self, 'status_label'):
-            self.status_label.config(
-                text=message, 
-                foreground='red' if is_error else 'green'
-            )
+        try:
+            if hasattr(self, 'status_label'):
+                self.status_label.config(
+                    text=message, 
+                    foreground='red' if is_error else 'green'
+                )
+                self.logger.info(message)
+            else:
+                # Use debug logging if status label is not available
+                if is_error:
+                    self.logger.error(message)
+                else:
+                    self.logger.debug(message)
+        except Exception as e:
+            # Log any unexpected errors during status label update
+            self.logger.error(f"Error updating status label: {e}")
 
 
 def main():
