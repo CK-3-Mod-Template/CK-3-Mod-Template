@@ -96,7 +96,7 @@ class ActionButtonsUI:
         list_game_files_btn = ttk.Button(
             action_buttons_frame, 
             text="List Game Files", 
-            command=lambda: CK3GameUtils.list_game_files(parent_class.steam_path),
+            command=lambda: CK3GameUtils.list_game_files(parent_class.steam_path, status_callback=parent_class.update_status_label),
             style='warning.TButton'  # Use a warning-styled button
         )
         list_game_files_btn.pack(side=tk.LEFT, padx=5, expand=True, fill='x')
