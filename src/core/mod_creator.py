@@ -78,7 +78,7 @@ class ModCreator:
             Recursively copy files and replace placeholders.
             
             Args:
-                src (str): Source directory path
+            src (str): Source directory path
             dst (str): Destination directory path
             short_mod_name (str): Short mod name to replace placeholders
             mod_name (str): Full mod name to replace placeholders
