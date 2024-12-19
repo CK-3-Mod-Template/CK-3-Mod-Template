@@ -12,6 +12,7 @@ from src.ui.header_ui import HeaderUI
 from src.ui.input_sections_ui import InputSectionsUI
 from src.ui.action_buttons_ui import ActionButtonsUI
 from src.core.game_utils import CK3GameUtils
+from src.core.mod_creator import ModCreator
 from debug.config import is_debug_mode
 from debug.logger import setup_logger
 
@@ -107,7 +108,6 @@ class SteamModCreator:
         if not self.validate_short_mod_name(short_mod_name):
             return
 
-
         # Collect selected tags
         selected_tags = [tag for tag, var in self.mod_tags_vars.items() if var.get()]
         # If no tags selected, use a default tag
@@ -117,106 +117,67 @@ class SteamModCreator:
         # Get the supported version from the entry
         supported_version = self.supported_version_entry.get().strip() if self.supported_version_entry else ""
 
+        # Create mod structure
+        mod_creation_result = ModCreator.create_mod_structure(
+            mod_name, 
+            short_mod_name, 
+            selected_tags, 
+            supported_version, 
+            self.debug,
+            status_callback=self.update_status_label
+        )
+
+        if not mod_creation_result['success']:
+            messagebox.showerror("Mod Creation Error", mod_creation_result['error'])
+            return
+
+        # Copy essentials folder
+        essentials_source = os.path.join(os.path.dirname(__file__), 'mod', 'essentials')
+        
+        # Check if essentials folder exists
+        if os.path.exists(essentials_source):
+            # Copy essentials to mod folder with placeholder replacement
+            essentials_copy_result = ModCreator.copy_and_replace(
+                essentials_source, 
+                mod_creation_result['mod_folder_path'], 
+                short_mod_name, 
+                mod_name,
+                status_callback=self.update_status_label
+            )
+
+            if not essentials_copy_result['success']:
+                messagebox.showerror("Essentials Copy Error", essentials_copy_result['error'])
+                return
+
+        # Show success message
+        messagebox.showinfo("Mod Created", f"Mod '{mod_name}' created successfully in {mod_creation_result['mod_folder_path']}")
+
+    def update_status_label(self, message, is_error=False):
+        """
+        Update the status label with a message.
+        
+        Args:
+            message (str): Message to display
+            is_error (bool, optional): Whether the message is an error. Defaults to False.
+        """
         try:
-            # Determine mod paths based on debug flag
-            if self.debug:
-                # Use local debug output path
-                documents_path = os.path.join(os.path.dirname(__file__), 'debug', 'output')
+            if hasattr(self, 'status_label'):
+                self.status_label.config(
+                    text=message, 
+                    foreground='red' if is_error else 'green'
+                )
+                self.logger.info(message)
             else:
-                # Use Paradox Interactive Documents folder
-                if platform.system() == "Windows":
-                    documents_path = os.path.join(os.path.expanduser('~'), 'Documents', 'Paradox Interactive', 'Crusader Kings III', 'mod')
-                elif platform.system() == "Linux":
-                    documents_path = os.path.join(os.path.expanduser('~'), '.local', 'share', 'Paradox Interactive', 'Crusader Kings III', 'mod')
+                # Use debug logging if status label is not available
+                if is_error:
+                    self.logger.error(message)
                 else:
-                    raise OSError("Unsupported operating system")
-
-            # Ensure the mod directory exists
-            os.makedirs(documents_path, exist_ok=True)
-
-            # Create mod folder
-            mod_folder_path = os.path.join(documents_path, short_mod_name)
-            os.makedirs(mod_folder_path, exist_ok=True)
-
-            # Create .mod file
-            mod_file_path = os.path.join(documents_path, f"{short_mod_name}.mod")
-            
-            # Prepare mod file content
-            mod_file_content = (
-                f'version="1"\n'
-                f'tags={{\n'
-                + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
-                "\n}\n"
-                f'name="{mod_name}"\n'
-                f'supported_version="{supported_version or "TODO"}"\n'
-                f'path="{mod_folder_path.replace(os.sep, "/")}"\n'
-            )
-
-            # Write .mod file
-            with open(mod_file_path, 'w', encoding='utf-8') as mod_file:
-                mod_file.write(mod_file_content)
-
-            # Create descriptor.mod inside the mod folder
-            descriptor_file_path = os.path.join(mod_folder_path, "descriptor.mod")
-            descriptor_file_content = (
-                f'version="1"\n'
-                f'tags={{\n'
-                + ",\n".join(f'\t"{tag}"' for tag in selected_tags) + 
-                "\n}\n"
-                f'name="{mod_name}"\n'
-                f'supported_version="{supported_version or "TODO"}"\n'
-            )
-
-            # Write descriptor.mod file
-            with open(descriptor_file_path, 'w', encoding='utf-8') as descriptor_file:
-                descriptor_file.write(descriptor_file_content)
-
-            # Copy essentials folder
-            essentials_source = os.path.join(os.path.dirname(__file__), 'mod', 'essentials')
-            
-            # Check if essentials folder exists
-            if os.path.exists(essentials_source):
-                # Recursive copy function with placeholder replacement
-                def copy_and_replace(src, dst):
-                    # Ensure destination directory exists
-                    os.makedirs(dst, exist_ok=True)
-                    
-                    # Iterate through all items in source directory
-                    for item in os.listdir(src):
-                        s = os.path.join(src, item)
-                        d = os.path.join(dst, item.replace('your_mod_name_here', short_mod_name).replace('your_long_mod_name_here', mod_name))
-                        
-                        if os.path.isdir(s):
-                            # Recursively copy subdirectories
-                            copy_and_replace(s, d)
-                        else:
-                            # Copy and replace placeholders for files
-                            with open(s, 'r', encoding='utf-8') as source_file:
-                                content = source_file.read()
-                            
-                            # Replace placeholders
-                            content = content.replace('<your_mod_name_here>', short_mod_name).replace('<your_long_mod_name_here>', mod_name)
-                            
-                            # Write to destination
-                            with open(d, 'w', encoding='utf-8') as dest_file:
-                                dest_file.write(content)
-
-                # Copy essentials to mod folder
-                copy_and_replace(essentials_source, mod_folder_path)
-            
-            # Show success message
-            messagebox.showinfo("Mod Created", 
-                                f"Mod successfully created:\n\n"
-                                f"Name: {mod_name}\n"
-                                f"Short Name: {short_mod_name}\n"
-                                f"Location: {mod_folder_path}")
-
+                    self.logger.debug(message)
         except Exception as e:
-            # Handle any errors during mod creation
-            messagebox.showerror("Mod Creation Error", 
-                                f"Could not create mod:\n{str(e)}")
-            import traceback
-            traceback.print_exc()
+            # Log any unexpected errors during status label update
+            self.logger.error(f"Error updating status label: {e}")
+
+
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
