@@ -118,15 +118,17 @@ class SteamModCreator:
         supported_version = self.supported_version_entry.get().strip() if self.supported_version_entry else ""
 
         # Create mod structure
-        documents_path, mod_folder_path = ModCreator.create_mod_structure(
+        mod_creation_result = ModCreator.create_mod_structure(
             mod_name, 
             short_mod_name, 
             selected_tags, 
             supported_version, 
-            self.debug
+            self.debug,
+            status_callback=self.update_status_label
         )
 
-        if not mod_folder_path:
+        if not mod_creation_result['success']:
+            messagebox.showerror("Mod Creation Error", mod_creation_result['error'])
             return
 
         # Copy essentials folder
@@ -135,12 +137,36 @@ class SteamModCreator:
         # Check if essentials folder exists
         if os.path.exists(essentials_source):
             # Copy essentials to mod folder with placeholder replacement
-            ModCreator.copy_and_replace(
+            essentials_copy_result = ModCreator.copy_and_replace(
                 essentials_source, 
-                mod_folder_path, 
+                mod_creation_result['mod_folder_path'], 
                 short_mod_name, 
-                mod_name
+                mod_name,
+                status_callback=self.update_status_label
             )
+
+            if not essentials_copy_result['success']:
+                messagebox.showerror("Essentials Copy Error", essentials_copy_result['error'])
+                return
+
+        # Show success message
+        messagebox.showinfo("Mod Created", f"Mod '{mod_name}' created successfully in {mod_creation_result['mod_folder_path']}")
+
+    # Add this method to the SteamModCreator class if not already present
+    def update_status_label(self, message, is_error=False):
+        """
+        Update the status label with a message.
+        
+        Args:
+            message (str): Message to display
+            is_error (bool, optional): Whether the message is an error. Defaults to False.
+        """
+        if hasattr(self, 'status_label'):
+            self.status_label.config(
+                text=message, 
+                foreground='red' if is_error else 'green'
+            )
+
 
 def main():
     # Use ttkbootstrap for a modern look
