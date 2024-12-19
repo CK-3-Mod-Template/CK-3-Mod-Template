@@ -75,10 +75,10 @@ class ModCreator:
     @staticmethod
     def copy_and_replace(src, dst, short_mod_name, mod_name, status_callback=None):
         """
-        Recursively copy files and replace placeholders.
-        
-        Args:
-            src (str): Source directory path
+            Recursively copy files and replace placeholders.
+            
+            Args:
+                src (str): Source directory path
             dst (str): Destination directory path
             short_mod_name (str): Short mod name to replace placeholders
             mod_name (str): Full mod name to replace placeholders
@@ -103,11 +103,11 @@ class ModCreator:
             # Iterate through all items in source directory
             for item in os.listdir(src):
                 s = os.path.join(src, item)
-                d = os.path.join(
-                    dst, 
-                    item.replace('your_mod_name_here', short_mod_name)
-                         .replace('your_long_mod_name_here', mod_name)
-                )
+                
+                # Replace placeholders in the destination path
+                replaced_item = (item.replace('your_mod_name_here', short_mod_name)
+                                .replace('your_long_mod_name_here', mod_name))
+                d = os.path.join(dst, replaced_item)
                 
                 if os.path.isdir(s):
                     # Recursively copy subdirectories
@@ -117,9 +117,9 @@ class ModCreator:
                     with open(s, 'r', encoding='utf-8') as source_file:
                         content = source_file.read()
                     
-                    # Replace placeholders
+                    # Replace placeholders in file content
                     content = (content.replace('<your_mod_name_here>', short_mod_name)
-                                      .replace('<your_long_mod_name_here>', mod_name))
+                                    .replace('<your_long_mod_name_here>', mod_name))
                     
                     # Write to destination
                     with open(d, 'w', encoding='utf-8') as dest_file:
