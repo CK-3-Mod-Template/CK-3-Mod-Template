@@ -66,7 +66,7 @@ class CK3GameUtils:
             status_callback (callable, optional): Callback to update status label
         
         Returns:
-            list: List of game files found
+            list: List of relative file paths in the game directory
         """
         try:
             # Construct the path to the game directory
@@ -74,7 +74,8 @@ class CK3GameUtils:
                 steam_path, 
                 'steamapps', 
                 'common', 
-                'Crusader Kings III'
+                'Crusader Kings III', 
+                'game'
             )
 
             # Check if game directory exists
@@ -83,17 +84,42 @@ class CK3GameUtils:
                     status_callback("Game directory not found", is_error=True)
                 return []
 
-            # Walk through the directory and collect all files
-            game_files = []
+            # Create a list to store file paths
+            file_list = []
+
+            # Walk through the directory and its subdirectories
             for root, dirs, files in os.walk(game_dir):
                 for file in files:
-                    game_files.append(os.path.join(root, file))
+                    # Get the full path of the file
+                    full_path = os.path.join(root, file)
+                    # Get the relative path from the game directory
+                    relative_path = os.path.relpath(full_path, game_dir)
+                    file_list.append(relative_path)
 
-            # Update status label with file count if callback is provided
-            if status_callback:
-                status_callback(f"Found {len(game_files)} game files")
+            # Create a 'data' directory if it doesn't exist
+            data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+            os.makedirs(data_dir, exist_ok=True)
 
-            return game_files
+            # Define the output file path
+            output_file = os.path.join(data_dir, 'vanilla_files.txt')
+
+            # Write the file list to the text file
+            try:
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    f.write(f"Total Files Found: {len(file_list)}\n\n")
+                    for file_path in sorted(file_list):
+                        f.write(file_path + "\n")
+                
+                # Show a success message via status callback if available
+                if status_callback:
+                    status_callback(f"Found {len(file_list)} game files. List saved to {output_file}")
+            
+            except Exception as e:
+                # Show an error message if file writing fails
+                if status_callback:
+                    status_callback(f"Failed to save file list: {str(e)}", is_error=True)
+
+            return file_list
 
         except Exception as e:
             # Detailed error logging
