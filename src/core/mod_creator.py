@@ -98,16 +98,16 @@ class ModCreator:
     @staticmethod
     def copy_and_replace(src, dst, short_mod_name, mod_name, status_callback=None):
         """
-        Recursively copy files and replace placeholders.
-        
-        Args:
-            src (str): Source directory path
-            dst (str): Destination directory path
-            short_mod_name (str): Short mod name to replace placeholders
+            Recursively copy files and replace placeholders.
+            
+            Args:
+                src (str): Source directory path
+                dst (str): Destination directory path
+                short_mod_name (str): Short mod name to replace placeholders
             mod_name (str): Full mod name to replace placeholders
             status_callback (callable, optional): Function to report status
         """
-        try:
+        def _copy_and_replace_internal(src, dst, short_mod_name, mod_name):
             # Ensure destination directory exists
             os.makedirs(dst, exist_ok=True)
             
@@ -118,7 +118,7 @@ class ModCreator:
                 
                 if os.path.isdir(s):
                     # Recursively copy subdirectories
-                    ModCreator.copy_and_replace(s, d, short_mod_name, mod_name, status_callback)
+                    _copy_and_replace_internal(s, d, short_mod_name, mod_name)
                 else:
                     # Copy and replace placeholders for files
                     with open(s, 'r', encoding='utf-8') as source_file:
@@ -131,8 +131,12 @@ class ModCreator:
                     # Write to destination
                     with open(d, 'w', encoding='utf-8') as dest_file:
                         dest_file.write(content)
+
+        try:
+            # Perform the recursive copy
+            _copy_and_replace_internal(src, dst, short_mod_name, mod_name)
             
-            # Optional status callback
+            # Optional status callback (called only once)
             if status_callback:
                 status_callback(f"Successfully copied essentials for mod '{mod_name}'")
 
@@ -150,3 +154,56 @@ class ModCreator:
                 'success': False,
                 'error': str(e)
             }
+            """
+            Recursively copy files and replace placeholders.
+            
+            Args:
+                src (str): Source directory path
+                dst (str): Destination directory path
+                short_mod_name (str): Short mod name to replace placeholders
+                mod_name (str): Full mod name to replace placeholders
+                status_callback (callable, optional): Function to report status
+            """
+            try:
+                # Ensure destination directory exists
+                os.makedirs(dst, exist_ok=True)
+                
+                # Iterate through all items in source directory
+                for item in os.listdir(src):
+                    s = os.path.join(src, item)
+                    d = os.path.join(dst, item.replace('your_mod_name_here', short_mod_name).replace('your_long_mod_name_here', mod_name))
+                    
+                    if os.path.isdir(s):
+                        # Recursively copy subdirectories
+                        ModCreator.copy_and_replace(s, d, short_mod_name, mod_name, status_callback)
+                    else:
+                        # Copy and replace placeholders for files
+                        with open(s, 'r', encoding='utf-8') as source_file:
+                            content = source_file.read()
+                        
+                        # Replace placeholders
+                        content = content.replace('<your_mod_name_here>', short_mod_name)
+                        content = content.replace('<your_long_mod_name_here>', mod_name)
+                        
+                        # Write to destination
+                        with open(d, 'w', encoding='utf-8') as dest_file:
+                            dest_file.write(content)
+                
+                # Optional status callback
+                if status_callback:
+                    status_callback(f"Successfully copied essentials for mod '{mod_name}'")
+
+                return {
+                    'success': True,
+                    'message': f"Essentials copied for mod '{mod_name}'"
+                }
+
+            except Exception as e:
+                # Optional error callback
+                if status_callback:
+                    status_callback(f"Error copying essentials: {str(e)}", is_error=True)
+
+                return {
+                    'success': False,
+                    'error': str(e)
+                }
