@@ -30,10 +30,7 @@ class SteamModCreator:
     def __init__(self, root, debug=False,steam_path=None):
         self.root = root
         self.logger = logging.getLogger('CK3ModCreator')
-        self.debug = debug  # New debug flag
-
-        # Set up global exception handling first
-        setup_exception_handling()
+        self.debug = debug
 
         # Initialize entry attributes before creating input sections
         self.mod_name_entry = None
