@@ -1,13 +1,11 @@
 {
     "theme": "flatly",
     "window_size": [
-        172,
-        39
+        1000,
+        1000
     ],
     "log_level": "INFO",
-    "recent_mods": [
-        "test"
-    ],
+    "recent_mods": [],
     "steam_path_history": [
         "e:\\steam neu"
     ],
