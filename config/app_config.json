@@ -1,8 +1,8 @@
 {
     "theme": "flatly",
     "window_size": [
-        437,
-        27
+        172,
+        39
     ],
     "log_level": "INFO",
     "recent_mods": [
@@ -11,5 +11,6 @@
     "steam_path_history": [
         "e:\\steam neu"
     ],
-    "current_steam_path": "e:\\steam neu"
+    "current_steam_path": "e:\\steam neu",
+    "first_startup": false
 }

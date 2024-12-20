@@ -67,11 +67,6 @@ class SteamModCreator:
         # Create Action Buttons
         ActionButtonsUI.create_action_buttons(self.main_frame, self)
 
-        # Steam Path Display
-        SteamPathUI.create_steam_path_display(
-            self.main_frame, 
-            self.steam_path
-        )
     
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
@@ -186,6 +181,9 @@ def main():
     steam_path = show_welcome_page(root)
      # Dynamically set debug mode
     debug_mode = is_debug_mode()
+    # Use saved Steam path if available
+    if not steam_path:
+        steam_path = ConfigManager.get_steam_path()
     app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
     # Bind window resize event
     root.bind('<Configure>', app.on_window_resize)

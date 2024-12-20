@@ -21,8 +21,12 @@ class WelcomePage:
         Show the welcome dialog for Steam path configuration.
         
         Returns:
-            str: Confirmed Steam path
+            str: Confirmed Steam path or None
         """
+        # Only show if it's the first startup
+        if not ConfigManager.is_first_startup():
+            return None
+
         # Create a top-level dialog
         self.welcome_dialog = tk.Toplevel(self.root)
         self.welcome_dialog.title("Welcome to CK3 Mod Creator")
@@ -34,7 +38,8 @@ class WelcomePage:
         frame.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)
 
         # Title
-        tk.Label(frame, text="Steam Path Configuration", font=("Helvetica", 16, "bold")).pack(pady=(0, 20))
+        tk.Label(frame, text="Welcome to CK3 Mod Creator", font=("Helvetica", 16, "bold")).pack(pady=(0, 20))
+        tk.Label(frame, text="Let's set up your Steam installation path", font=("Helvetica", 12)).pack(pady=(0, 10))
 
         # Attempt to detect Steam path
         detected_path = self._detect_steam_path()
@@ -51,6 +56,7 @@ class WelcomePage:
             if detected_path:
                 self.steam_path = detected_path
                 ConfigManager.set_steam_path(detected_path)
+                ConfigManager.mark_startup_complete()
                 self.welcome_dialog.destroy()
             else:
                 messagebox.showerror("Error", "No detected path available")
@@ -62,6 +68,7 @@ class WelcomePage:
                 path_var.set(custom_path)
                 self.steam_path = custom_path
                 ConfigManager.set_steam_path(custom_path)
+                ConfigManager.mark_startup_complete()
                 self.welcome_dialog.destroy()
 
         # Buttons frame
@@ -111,7 +118,7 @@ def show_welcome_page(root):
         root (tk.Tk): The main application root window
     
     Returns:
-        str: Confirmed Steam path
+        Optional[str]: Confirmed Steam path or None
     """
     welcome = WelcomePage(root)
     return welcome.show()
