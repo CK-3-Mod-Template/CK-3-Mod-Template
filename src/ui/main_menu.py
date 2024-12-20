@@ -6,10 +6,11 @@ import sys
 import tkinter.messagebox as messagebox
 
 class MainMenu:
-    def __init__(self, root, steam_path=None):
+    def __init__(self, root,debug=False, steam_path=None):
         # Use ttkbootstrap's Window instead of standard Tk
         self.root = root
         self.steam_path = steam_path
+        self.debug = debug
         
         # Configure window
         self.root.title("CK3 Mod Creator")
@@ -60,7 +61,7 @@ class MainMenu:
         from src.ui.steam_mod_creator import SteamModCreator
         self.root.withdraw()  # Hide main menu
         mod_creator_window = ttk.Toplevel(self.root)
-        app = SteamModCreator(mod_creator_window, steam_path=self.steam_path)
+        app = SteamModCreator(mod_creator_window,self.debug, steam_path=self.steam_path)
         mod_creator_window.protocol("WM_DELETE_WINDOW", lambda: self.on_mod_creator_close(mod_creator_window))
 
     def on_mod_creator_close(self, window):

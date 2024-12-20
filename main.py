@@ -9,12 +9,14 @@ from src.ui.main_menu import MainMenu
 import tkinter as tk
 
 def main():
+    from debug.debug_config import setup_logging, is_debug_mode, setup_exception_handling
+    # Set up global exception handling first
+    setup_exception_handling()
     # Initialize logging
-    import logging
-    logging.basicConfig(
-        level=logging.INFO, 
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
+    debug = is_debug_mode()
+    logger = setup_logging(debug)
+
+    logger.info(f"Initializing Main Menu in {'DEBUG' if debug else 'PRODUCTION'} mode")
 
     # Check for first-time setup or configuration
     from src.core.config import ConfigManager
@@ -36,7 +38,7 @@ def main():
         steam_path = ConfigManager.get_steam_path()
 
     # Launch main menu
-    app = MainMenu(root, steam_path)
+    app = MainMenu(root, debug, steam_path)
     root.mainloop()
 
 if __name__ == "__main__":
