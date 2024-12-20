@@ -21,7 +21,7 @@ class WelcomePage:
         Show the welcome dialog for Steam path configuration.
         
         Returns:
-            str: Confirmed Steam path or None
+            Optional[str]: Confirmed Steam path or None
         """
         # Only show if it's the first startup
         if not ConfigManager.is_first_startup():
@@ -31,6 +31,7 @@ class WelcomePage:
         self.welcome_dialog = tk.Toplevel(self.root)
         self.welcome_dialog.title("Welcome to CK3 Mod Creator")
         self.welcome_dialog.geometry("600x400")
+        self.welcome_dialog.protocol("WM_DELETE_WINDOW", self._on_close)  # Handle window close
         self.welcome_dialog.grab_set()  # Make the dialog modal
 
         # Create main frame
@@ -69,6 +70,18 @@ class WelcomePage:
                 self.steam_path = custom_path
                 ConfigManager.set_steam_path(custom_path)
                 ConfigManager.mark_startup_complete()
+                self.welcome_dialog.destroy()
+            else:
+                messagebox.showwarning("Warning", "Steam path is required to proceed")
+
+        def _on_close():
+            """
+            Handle window close event.
+            Prevents closing without selecting a path on first startup.
+            """
+            if ConfigManager.is_first_startup():
+                messagebox.showwarning("Warning", "Steam path is required to proceed")
+            else:
                 self.welcome_dialog.destroy()
 
         # Buttons frame

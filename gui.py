@@ -176,15 +176,26 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
+    root.withdraw()  # Hide the main window initially
 
-    # Show welcome page and get Steam path
-    steam_path = show_welcome_page(root)
+    # Check if it's first startup
+    if ConfigManager.is_first_startup():
+        # Show only the welcome page
+        steam_path = show_welcome_page(root)
+        
+        # If no path selected, exit the application
+        if steam_path is None:
+            root.quit()
+            return
+    else:
+        # Not first startup, get saved Steam path
+        steam_path = ConfigManager.get_steam_path()
+
      # Dynamically set debug mode
     debug_mode = is_debug_mode()
-    # Use saved Steam path if available
-    if not steam_path:
-        steam_path = ConfigManager.get_steam_path()
     app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
+    # Show the main window
+    root.deiconify()
     # Bind window resize event
     root.bind('<Configure>', app.on_window_resize)
     root.mainloop()
