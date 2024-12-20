@@ -72,6 +72,8 @@ def main():
     # Set initial window size from configuration
     window_size = config.get('window_size', (1000, 1000))
     root.geometry(f"{window_size[0]}x{window_size[1]}")
+    # Hide the main window initially
+    root.withdraw()
     
     # Check if it's first startup
     if ConfigManager.is_first_startup():
@@ -85,6 +87,8 @@ def main():
         # Not first startup, get saved Steam path
         steam_path = ConfigManager.get_steam_path()
 
+    # Show the main window
+    root.deiconify()
     # Launch main menu
     app = MainMenu(root, debug, steam_path)
     
