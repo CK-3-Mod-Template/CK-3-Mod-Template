@@ -153,4 +153,6 @@ class SettingsWindow:
             self.settings_window.destroy()
         
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to save settings: {str(e)}")
+            #messagebox.showerror("Error", f"Failed to save settings: {str(e)}")
+            self.settings_window.destroy()
+            pass
