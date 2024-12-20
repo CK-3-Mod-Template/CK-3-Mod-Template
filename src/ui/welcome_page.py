@@ -161,12 +161,12 @@ class SetupWizard:
         path_entry.pack(pady=(0, 10))
 
         # Status label for user feedback
-        status_var = tk.StringVar()
+        status_var = tk.StringVar(value="⚠️ No Steam path selected")
         status_label = tk.Label(
             self.main_frame, 
             textvariable=status_var, 
             font=("Helvetica", 10),
-            fg="green"
+            fg="orange"
         )
         status_label.pack(pady=(0, 10))
 
@@ -201,7 +201,7 @@ class SetupWizard:
                 path_entry.config(bg='light green')
                 path_entry.after(1500, lambda: path_entry.config(bg='white'))
             else:
-                status_var.set("✗ No path selected")
+                status_var.set("⚠️ No path selected")
 
         # Use Detected Path button (only if path exists)
         if detected_path:
@@ -324,12 +324,12 @@ class SetupWizard:
             path_entry.pack(pady=(0, 10))
 
             # Status label for user feedback
-            status_var = tk.StringVar()
+            status_var = tk.StringVar(value="⚠️ No mod directory selected")
             status_label = tk.Label(
                 self.main_frame, 
                 textvariable=status_var, 
                 font=("Helvetica", 10),
-                fg="green"
+                fg="orange"
             )
             status_label.pack(pady=(0, 10))
 
@@ -357,7 +357,7 @@ class SetupWizard:
                     path_entry.config(bg='light green')
                     path_entry.after(1500, lambda: path_entry.config(bg='white'))
                 else:
-                    status_var.set("✗ No directory selected")
+                    status_var.set("⚠️ No directory selected")
 
             # Buttons frame
             button_frame = tk.Frame(self.main_frame)
