@@ -2,6 +2,49 @@ import os
 import sys
 import logging
 from datetime import datetime
+import traceback
+import sys
+
+
+
+def global_exception_handler(exc_type, exc_value, exc_traceback):
+    """
+    Global exception handler to log unhandled exceptions.
+    
+    Args:
+        exc_type (type): Exception type
+        exc_value (Exception): Exception instance
+        exc_traceback (traceback): Traceback object
+    """
+    logger = logging.getLogger('CK3ModCreator')
+    
+    # Log the full traceback
+    error_msg = "Uncaught exception:\n" + "".join(
+        traceback.format_exception(exc_type, exc_value, exc_traceback)
+    )
+    logger.error(error_msg)
+    
+    # Optionally show a user-friendly error dialog
+    try:
+        import tkinter as tk
+        from tkinter import messagebox
+        
+        root = tk.Tk()
+        root.withdraw()  # Hide the main window
+        messagebox.showerror(
+            "Unexpected Error", 
+            f"An unexpected error occurred:\n{exc_value}\n\n"
+            "Please check the log files for more details."
+        )
+    except Exception:
+        # Fallback if tkinter is not available
+        print(error_msg)
+
+def setup_exception_handling():
+    """
+    Set up global exception handling.
+    """
+    sys.excepthook = global_exception_handler
 
 def is_debug_mode():
     """
