@@ -6,17 +6,15 @@ import sys
 import tkinter.messagebox as messagebox
 
 class MainMenu:
-    def __init__(self, root):
+    def __init__(self, root, steam_path=None):
         # Use ttkbootstrap's Window instead of standard Tk
-        self.root = ttk.Window(themename="flatly")
+        self.root = root
+        self.steam_path = steam_path
+        
+        # Configure window
         self.root.title("CK3 Mod Creator")
         self.root.geometry("600x700")
         self.root.resizable(False, False)
-
-        # Configure colors
-        bg_color = "#2C3E50"  # Dark blue-gray
-        btn_color = "#34495E"  # Slightly lighter blue-gray
-        text_color = "#ECF0F1"  # Light gray-white
 
         # Create main frame
         main_frame = ttk.Frame(self.root)
@@ -59,10 +57,10 @@ class MainMenu:
 
     def open_mod_creator(self):
         """Open the mod creation window"""
-        from gui import SteamModCreator
+        from src.ui.steam_mod_creator import SteamModCreator
         self.root.withdraw()  # Hide main menu
         mod_creator_window = ttk.Toplevel(self.root)
-        app = SteamModCreator(mod_creator_window)
+        app = SteamModCreator(mod_creator_window, steam_path=self.steam_path)
         mod_creator_window.protocol("WM_DELETE_WINDOW", lambda: self.on_mod_creator_close(mod_creator_window))
 
     def on_mod_creator_close(self, window):
@@ -85,10 +83,3 @@ class MainMenu:
     def quit_application(self):
         """Quit the application"""
         self.root.quit()
-
-def main():
-    app = MainMenu(None)
-    app.root.mainloop()
-
-if __name__ == "__main__":
-    main()

@@ -5,9 +5,12 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
-import re
+import re, sys
 from typing import List, Optional, Dict, Any
 import dataclasses
+# Add the project root to the Python path
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, project_root)
 from src.core.steam_finder import SteamPathFinder as SteamPF
 from src.ui.steam_path_ui import SteamPathUI
 from src.ui.header_ui import HeaderUI
@@ -23,7 +26,7 @@ from src.ui.main_menu import MainMenu
 
 
 class SteamModCreator:
-    def __init__(self, root, debug,steam_path=None):
+    def __init__(self, root, debug=False,steam_path=None):
         self.root = root
         self.logger = setup_logging(debug)
         self.debug = debug  # New debug flag
