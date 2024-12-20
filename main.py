@@ -1,6 +1,7 @@
 import sys
 import os
 import tkinter as tk
+import ttkbootstrap as ttk
 from typing import Optional, Tuple
 
 # Add the project root to the Python path
@@ -21,19 +22,32 @@ def configure_application_style(root: tk.Tk, theme: str = 'flatly') -> None:
         theme (str, optional): The theme to apply. Defaults to 'flatly'.
     """
     # Set global background color and font
-    bg_color = '#f0f0f0'  # Light gray background
-    font_style = ('Segoe UI', 10)  # Modern, clean font
-    
-    root.configure(bg=bg_color)
-    root.option_add('*Font', font_style)
-    
-    # Additional theme-specific configurations can be added here
     if theme == 'dark':
+        # Dark theme configuration
         bg_color = '#2c2c2c'
         fg_color = '#ffffff'
+        
+        # Configure root window
         root.configure(bg=bg_color)
-        root.option_add('*Background', bg_color)
-        root.option_add('*Foreground', fg_color)
+        
+        # Configure global styles for ttkbootstrap
+        style = ttk.Style()
+        style.theme_use('darkly')  # Use a dark theme from ttkbootstrap
+    else:
+        # Light theme configuration (default)
+        bg_color = '#f0f0f0'  # Light gray background
+        fg_color = '#000000'
+        
+        # Configure root window
+        root.configure(bg=bg_color)
+        
+        # Configure global styles for ttkbootstrap
+        style = ttk.Style()
+        style.theme_use('flatly')  # Use a light theme from ttkbootstrap
+    
+    # Set global font
+    font_style = ('Segoe UI', 10)  # Modern, clean font
+    root.option_add('*Font', font_style)
 
 def main():
     # Set up global exception handling first
