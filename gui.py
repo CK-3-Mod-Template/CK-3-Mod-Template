@@ -18,10 +18,11 @@ from src.core.mod_creator import ModCreator
 from debug.debug_config import setup_logging, is_debug_mode, setup_exception_handling
 from src.core.config import ConfigManager
 from src.core.mod_params import ModCreationParams
+from src.ui.welcome_page import show_welcome_page
 
 
 class SteamModCreator:
-    def __init__(self, root, debug):
+    def __init__(self, root, debug,steam_path=None):
         self.root = root
         self.logger = setup_logging(debug)
         self.debug = debug  # New debug flag
@@ -56,7 +57,7 @@ class SteamModCreator:
         HeaderUI.create_header(self.main_frame)
 
         # Steam Path Detection
-        self.steam_path = SteamPF.detect_steam_path(self.root)
+        self.steam_path = steam_path if steam_path else SteamPF.detect_steam_path(self.root)
 
         self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
 
@@ -181,9 +182,11 @@ def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
 
+    # Show welcome page and get Steam path
+    steam_path = show_welcome_page(root)
      # Dynamically set debug mode
     debug_mode = is_debug_mode()
-    app = SteamModCreator(root, debug=debug_mode)
+    app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
     # Bind window resize event
     root.bind('<Configure>', app.on_window_resize)
     root.mainloop()
