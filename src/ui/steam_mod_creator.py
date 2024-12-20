@@ -183,32 +183,32 @@ class SteamModCreator:
         ConfigManager.update_config('window_size', (event.width, event.height))
 
 
-def main():
-    # Use ttkbootstrap for a modern look
-    root = ttk.Window(themename="flatly")
-    root.withdraw()  # Hide the main window initially
+# def main():
+#     # Use ttkbootstrap for a modern look
+#     root = ttk.Window(themename="flatly")
+#     root.withdraw()  # Hide the main window initially
 
-    # Check if it's first startup
-    if ConfigManager.is_first_startup():
-        # Show only the welcome page
-        steam_path = show_welcome_page(root)
+#     # Check if it's first startup
+#     if ConfigManager.is_first_startup():
+#         # Show only the welcome page
+#         steam_path = show_welcome_page(root)
         
-        # If no path selected, exit the application
-        if steam_path is None:
-            root.quit()
-            return
-    else:
-        # Not first startup, get saved Steam path
-        steam_path = ConfigManager.get_steam_path()
+#         # If no path selected, exit the application
+#         if steam_path is None:
+#             root.quit()
+#             return
+#     else:
+#         # Not first startup, get saved Steam path
+#         steam_path = ConfigManager.get_steam_path()
 
-     # Dynamically set debug mode
-    debug_mode = is_debug_mode()
-    app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
-    # Show the main window
-    root.deiconify()
-    # Bind window resize event
-    root.bind('<Configure>', app.on_window_resize)
-    root.mainloop()
+#      # Dynamically set debug mode
+#     debug_mode = is_debug_mode()
+#     app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
+#     # Show the main window
+#     root.deiconify()
+#     # Bind window resize event
+#     root.bind('<Configure>', app.on_window_resize)
+#     root.mainloop()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
