@@ -220,7 +220,7 @@ class SetupWizard:
 
     def _game_version_step(self):
         """
-        Second step: Verify game version.
+        Third step: Verify game version.
         """
         # Title
         tk.Label(
@@ -231,7 +231,9 @@ class SetupWizard:
 
         # Try to find launcher settings
         try:
+            # Detect game version using Steam path
             game_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+            self.game_version = game_version
             
             # Display game version
             tk.Label(
@@ -246,7 +248,7 @@ class SetupWizard:
                 font=("Helvetica", 10)
             ).pack()
 
-        except Exception as e:
+        except (FileNotFoundError, ValueError) as e:
             # Version detection failed
             tk.Label(
                 self.main_frame, 
@@ -257,8 +259,9 @@ class SetupWizard:
 
             tk.Label(
                 self.main_frame, 
-                text=f"Error: {str(e)}", 
-                font=("Helvetica", 10)
+                text=str(e), 
+                font=("Helvetica", 10),
+                fg="red"
             ).pack()
 
             # Option to re-select Steam path

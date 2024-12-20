@@ -1,60 +1,74 @@
 import os
 import json
-import tkinter as tk
-from tkinter import messagebox
-import traceback
+import logging
 
 class CK3GameUtils:
-    @staticmethod
-    def get_latest_ck3_version(steam_path):
+    @classmethod
+    def get_latest_ck3_version(cls, steam_path):
         """
-        Fetch the latest Crusader Kings III version from launcher-settings.json.
+        Find the latest CK3 version by checking the launcher settings file.
         
         Args:
-            steam_path (str): Path to the Steam installation directory
+            steam_path (str): Path to Steam installation
         
         Returns:
-            str: The latest game version, or None if unable to fetch
+            str: Detected game version
+        
+        Raises:
+            FileNotFoundError: If launcher settings file cannot be found
+            ValueError: If version cannot be parsed from settings file
         """
-        try:
-            # Construct the path to the launcher-settings.json
-            launcher_settings_path = os.path.join(
-                steam_path, 
-                'steamapps', 
-                'common', 
-                'Crusader Kings III', 
-                'launcher', 
-                'launcher-settings.json'
-            )
+        # Validate steam_path
+        if not steam_path:
+            raise ValueError("Steam path is not provided")
 
-            # Check if the file exists
-            if not os.path.exists(launcher_settings_path):
-                print(f"Launcher settings file not found at: {launcher_settings_path}")
-                return None
+        # Construct path to launcher settings
+        launcher_settings_path = os.path.join(
+            steam_path, 
+            'steamapps', 
+            'common', 
+            'Crusader Kings III', 
+            'launcher', 
+            'launcher-settings.json'
+        )
 
-            # Read the JSON file
-            with open(launcher_settings_path, 'r', encoding='utf-8') as file:
-                settings = json.load(file)
+        # Log the exact path being checked
+        logging.info(f"Checking launcher settings at: {launcher_settings_path}")
 
-            # Extract the rawVersion
-            version = settings.get('rawVersion')
-
-            if version:
-                print(f"Found CK3 Version: {version}")
-                return version
-            else:
-                print("No rawVersion found in launcher-settings.json")
-                return None
-
-        except Exception as e:
-            # Detailed error logging
-            print("Full Error Traceback:")
-            traceback.print_exc()
+        # Check if file exists
+        if not os.path.exists(launcher_settings_path):
+            # Detailed logging for debugging
+            logging.error(f"Launcher settings file not found at: {launcher_settings_path}")
             
-            # If there's any error (file reading, parsing, etc.), show a message
-            messagebox.showwarning("Version Fetch Error", 
-                                f"Could not fetch the game version:\n{str(e)}")
-            return None
+            # Check if Steam path is correct
+            steamapps_path = os.path.join(steam_path, 'steamapps')
+            ck3_path = os.path.join(steam_path, 'steamapps', 'common', 'Crusader Kings III')
+            
+            logging.info(f"Checking Steam path: {steam_path}")
+            logging.info(f"Steamapps exists: {os.path.exists(steamapps_path)}")
+            logging.info(f"CK3 path exists: {os.path.exists(ck3_path)}")
+            
+            raise FileNotFoundError(f"Launcher settings file not found at: {launcher_settings_path}")
+
+        # Read launcher settings
+        try:
+            with open(launcher_settings_path, 'r') as f:
+                settings = json.load(f)
+                
+            # Extract version, with fallback
+            version = settings.get('version', 'Unknown')
+            
+            # Log successful version detection
+            logging.info(f"Detected CK3 version: {version}")
+            
+            return version
+        
+        except json.JSONDecodeError:
+            logging.error(f"Invalid JSON in launcher settings file: {launcher_settings_path}")
+            raise ValueError("Could not parse launcher settings file")
+        except Exception as e:
+            logging.error(f"Unexpected error reading launcher settings: {e}")
+            raise
 
     @staticmethod
     def list_game_files(steam_path, status_callback=None):
