@@ -15,7 +15,7 @@ from src.ui.input_sections_ui import InputSectionsUI
 from src.ui.action_buttons_ui import ActionButtonsUI
 from src.core.game_utils import CK3GameUtils
 from src.core.mod_creator import ModCreator
-from debug.debug_config import setup_logging, is_debug_mode
+from debug.debug_config import setup_logging, is_debug_mode, setup_exception_handling
 
 @dataclasses.dataclass
 class ModCreationParams:
@@ -38,12 +38,15 @@ class ModCreationParams:
         # Validate short mod name
         if not re.match(r'^[a-z0-9_]+$', self.short_mod_name):
             raise ValueError("Short mod name must contain only lowercase letters, numbers, and underscores")
-            
+
 class SteamModCreator:
     def __init__(self, root, debug):
         self.root = root
         self.logger = setup_logging(debug)
         self.debug = debug  # New debug flag
+
+        # Set up global exception handling first
+        setup_exception_handling()
 
         # Initialize entry attributes before creating input sections
         self.mod_name_entry = None
@@ -118,6 +121,7 @@ class SteamModCreator:
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
         short_mod_name = self.short_mod_name_entry.get().strip() if self.short_mod_name_entry else ""
+
 
         if not mod_name or not short_mod_name:
             messagebox.showerror("Error", "Please enter both Mod Name and Short Mod Name")

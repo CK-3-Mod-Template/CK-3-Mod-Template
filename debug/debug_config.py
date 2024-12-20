@@ -24,6 +24,7 @@ def global_exception_handler(exc_type, exc_value, exc_traceback):
     )
     logger.error(error_msg)
     
+
     # Optionally show a user-friendly error dialog
     try:
         import tkinter as tk
