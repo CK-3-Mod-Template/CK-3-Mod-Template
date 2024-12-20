@@ -11,7 +11,8 @@ class ConfigManager:
         'window_size': (1000, 1000),
         'log_level': 'INFO',
         'recent_mods': [],
-        'steam_path_history': []
+        'steam_path_history': [],
+        'current_steam_path': None
     }
 
     @classmethod
@@ -67,6 +68,59 @@ class ConfigManager:
         config_path = cls.get_config_path()
         with open(config_path, 'w') as f:
             json.dump(config, f, indent=4)
+
+    @classmethod
+    def set_steam_path(cls, steam_path: str):
+        """
+        Set the current Steam path and update path history.
+        
+        Args:
+            steam_path (str): Path to Steam installation
+        """
+        # Normalize the path to avoid duplicates
+        normalized_path = os.path.normpath(steam_path)
+        
+        # Load current configuration
+        config = cls.load_config()
+        
+        # Update current Steam path
+        config['current_steam_path'] = normalized_path
+        
+        # Update Steam path history
+        steam_path_history = config.get('steam_path_history', [])
+        
+        # Remove duplicates and add to the beginning of the list
+        if normalized_path in steam_path_history:
+            steam_path_history.remove(normalized_path)
+        steam_path_history.insert(0, normalized_path)
+        
+        # Limit history to last 10 paths
+        config['steam_path_history'] = steam_path_history[:10]
+        
+        # Save updated configuration
+        cls.save_config(config)
+
+    @classmethod
+    def get_steam_path(cls) -> Optional[str]:
+        """
+        Get the current Steam path.
+        
+        Returns:
+            Optional[str]: Current Steam path or None if not set
+        """
+        config = cls.load_config()
+        return config.get('current_steam_path')
+
+    @classmethod
+    def get_steam_path_history(cls) -> List[str]:
+        """
+        Get the history of Steam paths.
+        
+        Returns:
+            List[str]: List of previously used Steam paths
+        """
+        config = cls.load_config()
+        return config.get('steam_path_history', [])
 
     @classmethod
     def update_config(cls, key: str, value: Any):
