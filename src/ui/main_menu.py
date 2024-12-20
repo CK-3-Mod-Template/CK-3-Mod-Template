@@ -13,7 +13,7 @@ class MainMenu:
         self.debug = debug
         
         # Configure window
-        self.root.title("CK3 Mod Creator")
+        self.root.title("CK3 Mod Template")
         self.root.geometry("600x700")
         self.root.resizable(False, False)
 
@@ -24,7 +24,7 @@ class MainMenu:
         # Title
         title_label = ttk.Label(
             main_frame, 
-            text="CK3 Mod Creator", 
+            text="CK3 Mod Template", 
             font=('Helvetica', 24, 'bold')
         )
         title_label.pack(pady=(0, 40))
