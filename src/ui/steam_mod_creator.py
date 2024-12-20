@@ -8,6 +8,7 @@ import json
 import re, sys
 from typing import List, Optional, Dict, Any
 import dataclasses
+import logging
 # Add the project root to the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, project_root)
@@ -28,7 +29,7 @@ from src.ui.main_menu import MainMenu
 class SteamModCreator:
     def __init__(self, root, debug=False,steam_path=None):
         self.root = root
-        self.logger = setup_logging(debug)
+        self.logger = logging.getLogger('CK3ModCreator')
         self.debug = debug  # New debug flag
 
         # Set up global exception handling first
