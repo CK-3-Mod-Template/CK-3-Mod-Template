@@ -16,6 +16,17 @@ class WelcomePage:
         self.welcome_dialog = None
         self.steam_path = None
 
+    def _on_close(self):
+        """
+        Handle window close event.
+        Prevents closing without selecting a path on first startup.
+        """
+        if ConfigManager.is_first_startup():
+            messagebox.showwarning("Warning", "Steam path is required to proceed")
+        else:
+            if self.welcome_dialog:
+                self.welcome_dialog.destroy()
+
     def show(self):
         """
         Show the welcome dialog for Steam path configuration.
@@ -73,16 +84,6 @@ class WelcomePage:
                 self.welcome_dialog.destroy()
             else:
                 messagebox.showwarning("Warning", "Steam path is required to proceed")
-
-        def _on_close():
-            """
-            Handle window close event.
-            Prevents closing without selecting a path on first startup.
-            """
-            if ConfigManager.is_first_startup():
-                messagebox.showwarning("Warning", "Steam path is required to proceed")
-            else:
-                self.welcome_dialog.destroy()
 
         # Buttons frame
         button_frame = tk.Frame(frame)
