@@ -1,0 +1,12 @@
+{
+    "theme": "flatly",
+    "window_size": [
+        390,
+        27
+    ],
+    "log_level": "INFO",
+    "recent_mods": [
+        "test"
+    ],
+    "steam_path_history": []
+}
