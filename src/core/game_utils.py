@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import re
 
 class CK3GameUtils:
     @classmethod
@@ -12,7 +13,7 @@ class CK3GameUtils:
             steam_path (str): Path to Steam installation
         
         Returns:
-            str: Detected game version
+            dict: Detected game version with full version and version numbers
         
         Raises:
             FileNotFoundError: If launcher settings file cannot be found
@@ -55,13 +56,26 @@ class CK3GameUtils:
             with open(launcher_settings_path, 'r', encoding='utf-8') as f:
                 settings = json.load(f)
                 
-            # Extract version, with fallback
-            version = settings.get('version', 'Unknown')
+            # Extract full version, with fallback
+            full_version = settings.get('version', 
+                                        settings.get('rawVersion', 
+                                                    'Unknown'))
+            
+            # Extract version numbers
+            version_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', full_version)
+            if version_match:
+                version_numbers = version_match.group(1)
+            else:
+                version_numbers = full_version
             
             # Log successful version detection
-            logging.info(f"Detected CK3 version: {version}")
+            logging.info(f"Detected CK3 version: {full_version}")
+            logging.info(f"Version numbers: {version_numbers}")
             
-            return version
+            return {
+                'full_version': full_version,
+                'version_numbers': version_numbers
+            }
         
         except json.JSONDecodeError:
             logging.error(f"Invalid JSON in launcher settings file: {launcher_settings_path}")
@@ -70,6 +84,19 @@ class CK3GameUtils:
             logging.error(f"Unexpected error reading launcher settings: {e}")
             raise
 
+    @classmethod
+    def get_version_for_files(cls, version_info):
+        """
+        Get version numbers for file creation.
+        
+        Args:
+            version_info (dict): Version information from get_latest_ck3_version
+        
+        Returns:
+            str: Version numbers to use in files
+        """
+        return version_info['version_numbers']
+        
     @staticmethod
     def list_game_files(steam_path, status_callback=None):
         """

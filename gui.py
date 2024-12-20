@@ -59,7 +59,13 @@ class SteamModCreator:
         # Steam Path Detection
         self.steam_path = steam_path if steam_path else SteamPF.detect_steam_path(self.root)
 
-        self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+        #self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+        try:
+            version_info = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+            self.latest_version = CK3GameUtils.get_version_for_files(version_info)
+        except Exception as e:
+            self.logger.error(f"Could not detect game version: {e}")
+            self.latest_version = "Unknown"
 
         # Create Input Sections
         InputSectionsUI.create_input_sections(self.main_frame, self)

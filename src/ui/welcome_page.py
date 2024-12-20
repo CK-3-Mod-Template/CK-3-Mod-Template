@@ -409,13 +409,13 @@ class SetupWizard:
         # Try to find launcher settings
         try:
             # Detect game version using Steam path
-            game_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
-            self.game_version = game_version
+            version_info = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+            self.game_version = version_info
             
             # Display game version
             tk.Label(
                 self.main_frame, 
-                text=f"Detected CK3 Version: {game_version}", 
+                text=f"Detected CK3 Version: {version_info['full_version']}", 
                 font=("Helvetica", 12)
             ).pack(pady=(0, 10))
 
@@ -425,7 +425,7 @@ class SetupWizard:
                 font=("Helvetica", 10)
             ).pack()
 
-        except Exception as e:
+        except (FileNotFoundError, ValueError) as e:
             # Version detection failed
             tk.Label(
                 self.main_frame, 
@@ -436,8 +436,9 @@ class SetupWizard:
 
             tk.Label(
                 self.main_frame, 
-                text=f"Error: {str(e)}", 
-                font=("Helvetica", 10)
+                text=str(e), 
+                font=("Helvetica", 10),
+                fg="red"
             ).pack()
 
             # Option to re-select Steam path
