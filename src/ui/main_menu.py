@@ -6,9 +6,10 @@ import sys
 import tkinter.messagebox as messagebox
 
 from src.ui.settings_window import SettingsWindow
+from src.core.config import ConfigManager
 
 class MainMenu:
-    def __init__(self, root,debug=False, steam_path=None):
+    def __init__(self, root, debug=False, steam_path=None):
         # Use ttkbootstrap's Window instead of standard Tk
         self.root = root
         self.steam_path = steam_path
@@ -20,12 +21,21 @@ class MainMenu:
         self.root.resizable(False, False)
 
         # Create main frame
-        main_frame = ttk.Frame(self.root)
-        main_frame.pack(expand=True, fill='both', padx=20, pady=20)
+        self.main_frame = ttk.Frame(self.root)
+        self.main_frame.pack(expand=True, fill='both', padx=20, pady=20)
+
+        # Create menu items
+        self.create_menu_items()
+
+    def create_menu_items(self):
+        """Create menu items with dynamic styling"""
+        # Clear any existing widgets in the main frame
+        for widget in self.main_frame.winfo_children():
+            widget.destroy()
 
         # Title
         title_label = ttk.Label(
-            main_frame, 
+            self.main_frame, 
             text="CK3 Mod Template", 
             font=('Helvetica', 24, 'bold')
         )
@@ -42,7 +52,7 @@ class MainMenu:
 
         for text, command, style in buttons:
             btn = ttk.Button(
-                main_frame, 
+                self.main_frame, 
                 text=text, 
                 command=command,
                 style=f'{style}.TButton',
@@ -52,7 +62,7 @@ class MainMenu:
 
         # Version label
         version_label = ttk.Label(
-            main_frame, 
+            self.main_frame, 
             text="Version 1.0.0", 
             font=('Helvetica', 10)
         )
@@ -63,7 +73,7 @@ class MainMenu:
         from src.ui.steam_mod_creator import SteamModCreator
         self.root.withdraw()  # Hide main menu
         mod_creator_window = ttk.Toplevel(self.root)
-        app = SteamModCreator(mod_creator_window,self.debug, steam_path=self.steam_path)
+        app = SteamModCreator(mod_creator_window, self.debug, steam_path=self.steam_path)
         mod_creator_window.protocol("WM_DELETE_WINDOW", lambda: self.on_mod_creator_close(mod_creator_window))
 
     def on_mod_creator_close(self, window):
@@ -76,9 +86,26 @@ class MainMenu:
         messagebox.showinfo("Mod Tools", "Mod tools functionality coming soon!")
 
     def open_settings(self):
-        """Open application settings"""
-        SettingsWindow(self.root)
-        #messagebox.showinfo("Settings", "Settings functionality coming soon!")
+        """Open application settings with theme change support"""
+        SettingsWindow(self.root, apply_callback=self.apply_theme)
+
+    def apply_theme(self, theme):
+        """
+        Apply theme changes dynamically
+        
+        Args:
+            theme (str): Theme to apply ('flatly' or 'dark')
+        """
+        # Update ttkbootstrap style
+        style = ttk.Style()
+        style.theme_use('darkly' if theme == 'dark' else 'flatly')
+        
+        # Update root window background
+        bg_color = '#2c2c2c' if theme == 'dark' else '#f0f0f0'
+        self.root.configure(bg=bg_color)
+        
+        # Recreate menu items to reflect new theme
+        self.create_menu_items()
 
     def open_modding_help(self):
         """Open modding help resources"""

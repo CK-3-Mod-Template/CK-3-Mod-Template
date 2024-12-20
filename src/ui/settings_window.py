@@ -5,14 +5,16 @@ import tkinter.filedialog as filedialog
 from src.core.config import ConfigManager
 
 class SettingsWindow:
-    def __init__(self, parent):
+    def __init__(self, parent, apply_callback=None):
         """
         Create a settings window for application configuration
         
         Args:
             parent (tk.Tk or tk.Toplevel): Parent window
+            apply_callback (callable, optional): Callback to apply settings immediately
         """
         self.parent = parent
+        self.apply_callback = apply_callback
         
         # Create Toplevel window separately
         self.settings_window = ttk.Toplevel(parent)
@@ -124,7 +126,8 @@ class SettingsWindow:
                 return
             
             # Update configuration
-            self.config['theme'] = self.theme_var.get()
+            new_theme = self.theme_var.get()
+            self.config['theme'] = new_theme
             self.config['log_level'] = self.log_var.get()
             self.config['window_size'] = (width, height)
             
@@ -141,8 +144,12 @@ class SettingsWindow:
             # Save to config file
             ConfigManager.save_config(self.config)
             
+            # Apply settings immediately if callback is provided
+            if self.apply_callback:
+                self.apply_callback(new_theme)
+            
             # Show confirmation and close window
-            messagebox.showinfo("Settings", "Settings saved successfully. Restart the application to apply changes.")
+            messagebox.showinfo("Settings", "Settings saved successfully.")
             self.settings_window.destroy()
         
         except Exception as e:
