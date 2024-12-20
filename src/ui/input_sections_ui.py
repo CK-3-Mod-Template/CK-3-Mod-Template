@@ -47,12 +47,21 @@ class InputSectionsUI:
 
         ttk.Label(supported_version_frame, text="Supported Version:", font=('Helvetica', 10)).pack(anchor='w')
         
-        # Create a frame for entry and button
+        # Create a frame for entry, version name, and button
         version_input_frame = ttk.Frame(supported_version_frame)
         version_input_frame.pack(fill='x', expand=True)
 
         parent_class.supported_version_entry = ttk.Entry(version_input_frame, width=30)
         parent_class.supported_version_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=(0, 10))
+
+        # Version Name Label (initially hidden)
+        version_name_label = ttk.Label(
+            version_input_frame, 
+            text="", 
+            font=('Helvetica', 8), 
+            foreground='dark green'
+        )
+        version_name_label.pack(side=tk.LEFT, padx=(0, 10))
 
         # Button to open Patches wiki
         open_patches_btn = ttk.Button(
@@ -63,11 +72,35 @@ class InputSectionsUI:
         )
         open_patches_btn.pack(side=tk.RIGHT)
 
+        # Set initial version
+        if parent_class.latest_version:
+            parent_class.supported_version_entry.insert(0, parent_class.latest_version)
+            
+            # Show version name only if it's an automatically detected version
+            if hasattr(parent_class, 'version_info') and parent_class.version_info:
+                # Extract version name (text in parentheses)
+                version_name = parent_class.version_info.split('(')[-1].strip(')') if '(' in parent_class.version_info else ''
+                
+                if version_name:
+                    version_name_label.config(text=f"({version_name})")
+                
+                # Make version entry read-only to show it's auto-detected
+                parent_class.supported_version_entry.config(state='readonly')
+
+        # Function to handle version entry changes
+        def on_version_entry_change(event):
+            # When user starts editing, make entry editable and hide version name
+            parent_class.supported_version_entry.config(state='normal')
+            version_name_label.config(text="")
+
+        # Bind the change event
+        parent_class.supported_version_entry.bind('<FocusIn>', on_version_entry_change)
+
         # Tooltip for Supported Version
         ttk.Label(supported_version_frame, 
-                  text="Automatically fetched latest version from launcher", 
-                  font=('Helvetica', 8), 
-                  foreground='gray').pack(anchor='w')
+                text="Automatically fetched latest version from launcher", 
+                font=('Helvetica', 8), 
+                foreground='gray').pack(anchor='w')
 
         # Mod Tags Section
         tags_frame = ttk.LabelFrame(main_frame, text="Mod Tags", padding="10 10 10 10")
@@ -105,3 +138,27 @@ class InputSectionsUI:
         # Pre-fill the supported version entry
         if latest_version:
             parent_class.supported_version_entry.insert(0, latest_version)
+
+###Ideas:
+# Add a button to open the CK3 game folder
+# # Mod Author Input
+        # author_frame = ttk.Frame(main_frame)
+        # author_frame.pack(fill='x', pady=10)
+
+        # ttk.Label(author_frame, text="Mod Author:", font=('Helvetica', 10)).pack(anchor='w')
+        # parent_class.author_entry = ttk.Entry(author_frame, width=50)
+        # parent_class.author_entry.pack(fill='x', expand=True)
+        
+        # # Tooltip for Mod Author
+        # ttk.Label(author_frame, 
+        #           text="Enter the name of the mod author (e.g., 'Your Name')", 
+        #           font=('Helvetica', 8), 
+        #           foreground='gray').pack(anchor='w')
+
+        # # Mod Description Input
+        # description_frame = ttk.Frame(main_frame)
+        # description_frame.pack(fill='x', pady=10)
+
+        # ttk.Label(description_frame, text="Mod Description:", font=('Helvetica', 10)).pack(anchor='w')
+        # parent_class.description_entry = ttk.Entry(description_frame, width=50)
+        # parent_class.description_entry.pack(fill='x', expand=True)

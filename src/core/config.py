@@ -12,7 +12,8 @@ class ConfigManager:
         'log_level': 'INFO',
         'recent_mods': [],
         'steam_path_history': [],
-        'current_steam_path': None
+        'current_steam_path': None,
+        'first_startup': True
     }
 
     @classmethod
@@ -179,3 +180,23 @@ class ConfigManager:
             List[str]: List of recent mod names
         """
         return cls.get_config_value('recent_mods', [])
+
+    @classmethod
+    def is_first_startup(cls) -> bool:
+        """
+        Check if this is the first startup of the application.
+        
+        Returns:
+            bool: True if it's the first startup, False otherwise
+        """
+        config = cls.load_config()
+        return config.get('first_startup', True)
+
+    @classmethod
+    def mark_startup_complete(cls):
+        """
+        Mark the first startup as complete.
+        """
+        config = cls.load_config()
+        config['first_startup'] = False
+        cls.save_config(config)

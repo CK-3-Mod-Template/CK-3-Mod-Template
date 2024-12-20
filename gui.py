@@ -18,10 +18,11 @@ from src.core.mod_creator import ModCreator
 from debug.debug_config import setup_logging, is_debug_mode, setup_exception_handling
 from src.core.config import ConfigManager
 from src.core.mod_params import ModCreationParams
+from src.ui.welcome_page import show_welcome_page
 
 
 class SteamModCreator:
-    def __init__(self, root, debug):
+    def __init__(self, root, debug,steam_path=None):
         self.root = root
         self.logger = setup_logging(debug)
         self.debug = debug  # New debug flag
@@ -33,6 +34,7 @@ class SteamModCreator:
         self.mod_name_entry = None
         self.short_mod_name_entry = None
         self.supported_version_entry = None
+        self.version_info = None
         self.mod_tags_vars = {}
 
         # Log initialization
@@ -56,9 +58,16 @@ class SteamModCreator:
         HeaderUI.create_header(self.main_frame)
 
         # Steam Path Detection
-        self.steam_path = SteamPF.detect_steam_path(self.root)
+        self.steam_path = steam_path if steam_path else SteamPF.detect_steam_path(self.root)
 
-        self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+        #self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+        try:
+            self.version_info = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+            self.latest_version = CK3GameUtils.get_version_for_files(self.version_info)
+            self.version_info = CK3GameUtils.get_version_info_for_ui(self.version_info)
+        except Exception as e:
+            self.logger.error(f"Could not detect game version: {e}")
+            self.latest_version = "Unknown"
 
         # Create Input Sections
         InputSectionsUI.create_input_sections(self.main_frame, self)
@@ -66,11 +75,6 @@ class SteamModCreator:
         # Create Action Buttons
         ActionButtonsUI.create_action_buttons(self.main_frame, self)
 
-        # Steam Path Display
-        SteamPathUI.create_steam_path_display(
-            self.main_frame, 
-            self.steam_path
-        )
     
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
@@ -180,10 +184,26 @@ class SteamModCreator:
 def main():
     # Use ttkbootstrap for a modern look
     root = ttk.Window(themename="flatly")
+    root.withdraw()  # Hide the main window initially
+
+    # Check if it's first startup
+    if ConfigManager.is_first_startup():
+        # Show only the welcome page
+        steam_path = show_welcome_page(root)
+        
+        # If no path selected, exit the application
+        if steam_path is None:
+            root.quit()
+            return
+    else:
+        # Not first startup, get saved Steam path
+        steam_path = ConfigManager.get_steam_path()
 
      # Dynamically set debug mode
     debug_mode = is_debug_mode()
-    app = SteamModCreator(root, debug=debug_mode)
+    app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
+    # Show the main window
+    root.deiconify()
     # Bind window resize event
     root.bind('<Configure>', app.on_window_resize)
     root.mainloop()
