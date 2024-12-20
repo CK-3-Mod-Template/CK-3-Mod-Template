@@ -52,7 +52,7 @@ class CK3GameUtils:
 
         # Read launcher settings
         try:
-            with open(launcher_settings_path, 'r') as f:
+            with open(launcher_settings_path, 'r', encoding='utf-8') as f:
                 settings = json.load(f)
                 
             # Extract version, with fallback
