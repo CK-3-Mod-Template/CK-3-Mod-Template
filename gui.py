@@ -19,6 +19,7 @@ from debug.debug_config import setup_logging, is_debug_mode, setup_exception_han
 from src.core.config import ConfigManager
 from src.core.mod_params import ModCreationParams
 from src.ui.welcome_page import show_welcome_page
+from src.ui.main_menu import MainMenu
 
 
 class SteamModCreator:
@@ -207,7 +208,6 @@ def main():
     # Bind window resize event
     root.bind('<Configure>', app.on_window_resize)
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()
