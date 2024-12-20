@@ -17,8 +17,11 @@ class SetupWizard:
         self.setup_dialog = None
         self.current_step = 0
         self.steam_path = None
+        self.game_version = None
+        self.mod_directory = None
         self.steps = [
             self._steam_path_step,
+            self._mod_directory_step,
             self._game_version_step
         ]
 
@@ -263,6 +266,148 @@ class SetupWizard:
             # Return None if path cannot be detected
             return None
 
+    def _mod_directory_step(self):
+        """
+        Second step: Detect and confirm CK3 mod directory.
+        """
+        # Title
+        tk.Label(
+            self.main_frame, 
+            text="Mod Directory Configuration", 
+            font=("Helvetica", 16, "bold")
+        ).pack(pady=(0, 20))
+
+        # Try to detect mod directory
+        try:
+            # Detect mod directory in Documents
+            documents_path = os.path.join(os.path.expanduser('~'), 'Documents')
+            mod_dir = os.path.join(documents_path, 'Paradox Interactive', 'Crusader Kings III', 'mod')
+            
+            # Ensure directory exists
+            os.makedirs(mod_dir, exist_ok=True)
+
+            # Display mod directory
+            tk.Label(
+                self.main_frame, 
+                text="Detected Mod Directory:", 
+                font=("Helvetica", 12)
+            ).pack()
+
+            path_var = tk.StringVar(value=mod_dir)
+            path_entry = tk.Entry(
+                self.main_frame, 
+                textvariable=path_var, 
+                width=60, 
+                state='readonly'
+            )
+            path_entry.pack(pady=(0, 10))
+
+            def use_detected_directory():
+                """Use the detected mod directory"""
+                self.mod_directory = mod_dir
+                path_var.set(mod_dir)
+
+            def choose_custom_directory():
+                """Open directory selection dialog"""
+                from tkinter import filedialog
+                custom_dir = filedialog.askdirectory(
+                    title="Select CK3 Mod Directory",
+                    initialdir=documents_path
+                )
+                if custom_dir:
+                    path_var.set(custom_dir)
+                    self.mod_directory = custom_dir
+
+            # Buttons frame
+            button_frame = tk.Frame(self.main_frame)
+            button_frame.pack(pady=(20, 0))
+
+            # Use Detected Directory button
+            tk.Button(
+                button_frame, 
+                text="Use Detected Directory", 
+                command=use_detected_directory
+            ).pack(side=tk.LEFT, padx=5)
+
+            # Choose Custom Directory button
+            tk.Button(
+                button_frame, 
+                text="Choose Custom Directory", 
+                command=choose_custom_directory
+            ).pack(side=tk.LEFT, padx=5)
+
+        except Exception as e:
+            # Directory detection failed
+            tk.Label(
+                self.main_frame, 
+                text="Could not detect mod directory", 
+                font=("Helvetica", 12, "bold"),
+                fg="red"
+            ).pack(pady=(0, 10))
+
+            tk.Label(
+                self.main_frame, 
+                text=f"Error: {str(e)}", 
+                font=("Helvetica", 10)
+            ).pack()
+
+    def _game_version_step(self):
+        """
+        Third step: Verify game version.
+        """
+        # Title
+        tk.Label(
+            self.main_frame, 
+            text="Game Version Verification", 
+            font=("Helvetica", 16, "bold")
+        ).pack(pady=(0, 20))
+
+        # Try to find launcher settings
+        try:
+            # Detect game version using Steam path
+            game_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+            self.game_version = game_version
+            
+            # Display game version
+            tk.Label(
+                self.main_frame, 
+                text=f"Detected CK3 Version: {game_version}", 
+                font=("Helvetica", 12)
+            ).pack(pady=(0, 10))
+
+            tk.Label(
+                self.main_frame, 
+                text="Game version successfully detected!", 
+                font=("Helvetica", 10)
+            ).pack()
+
+        except Exception as e:
+            # Version detection failed
+            tk.Label(
+                self.main_frame, 
+                text="Could not detect game version", 
+                font=("Helvetica", 12, "bold"),
+                fg="red"
+            ).pack(pady=(0, 10))
+
+            tk.Label(
+                self.main_frame, 
+                text=f"Error: {str(e)}", 
+                font=("Helvetica", 10)
+            ).pack()
+
+            # Option to re-select Steam path
+            def retry_steam_path():
+                """Go back to Steam path selection"""
+                self.current_step = 0
+                self._run_current_step()
+
+            tk.Button(
+                self.main_frame, 
+                text="Retry Steam Path", 
+                command=retry_steam_path
+            ).pack(pady=(20, 0))
+
     def _validate_current_step(self):
         """
         Validate the current setup step.
@@ -275,6 +420,11 @@ class SetupWizard:
                 messagebox.showwarning("Warning", "Please select a Steam path")
                 return False
             ConfigManager.set_steam_path(self.steam_path)
+        
+        elif self.current_step == 1:  # Mod directory step
+            if not self.mod_directory:
+                messagebox.showwarning("Warning", "Please select a mod directory")
+                return False
         
         return True
 
