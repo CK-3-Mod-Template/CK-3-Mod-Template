@@ -6,6 +6,8 @@ import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
 import re
+from typing import List, Optional, Dict, Any
+import dataclasses
 from src.core.steam_finder import SteamPathFinder as SteamPF
 from src.ui.steam_path_ui import SteamPathUI
 from src.ui.header_ui import HeaderUI
@@ -15,7 +17,28 @@ from src.core.game_utils import CK3GameUtils
 from src.core.mod_creator import ModCreator
 from debug.debug_config import setup_logging, is_debug_mode
 
+@dataclasses.dataclass
+class ModCreationParams:
+    """
+    Dataclass to validate and store mod creation parameters.
+    """
+    mod_name: str
+    short_mod_name: str
+    tags: List[str]
+    supported_version: Optional[str] = None
 
+    def __post_init__(self):
+        """
+        Validate mod creation parameters.
+        """
+        # Validate mod name
+        if not self.mod_name or len(self.mod_name) < 3:
+            raise ValueError("Mod name must be at least 3 characters long")
+        
+        # Validate short mod name
+        if not re.match(r'^[a-z0-9_]+$', self.short_mod_name):
+            raise ValueError("Short mod name must contain only lowercase letters, numbers, and underscores")
+            
 class SteamModCreator:
     def __init__(self, root, debug):
         self.root = root
