@@ -64,6 +64,7 @@ class SteamModCreator:
         try:
             self.version_info = CK3GameUtils.get_latest_ck3_version(self.steam_path)
             self.latest_version = CK3GameUtils.get_version_for_files(self.version_info)
+            self.version_info = CK3GameUtils.get_version_info_for_ui(self.version_info)
         except Exception as e:
             self.logger.error(f"Could not detect game version: {e}")
             self.latest_version = "Unknown"

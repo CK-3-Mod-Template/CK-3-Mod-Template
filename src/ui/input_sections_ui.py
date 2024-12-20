@@ -100,8 +100,8 @@ class InputSectionsUI:
         tags_frame.grid_rowconfigure(len(mod_tags) // 3 + 1, weight=1)
 
         # Automatically fetch the latest CK3 version
-        latest_version = parent_class.latest_version
+        version_info = parent_class.version_info
         
         # Pre-fill the supported version entry
-        if latest_version:
-            parent_class.supported_version_entry.insert(0, latest_version)
+        if version_info:
+            parent_class.supported_version_entry.insert(0, version_info)

@@ -96,6 +96,19 @@ class CK3GameUtils:
             str: Version numbers to use in files
         """
         return version_info['version_numbers']
+
+    @classmethod
+    def get_version_info_for_ui(cls, version_info):
+        """
+        Get version information for ui creation.
+        
+        Args:
+            version_info (dict): Version information from get_latest_ck3_version
+        
+        Returns:
+            str: Full version string
+        """
+        return version_info['full_version']
         
     @staticmethod
     def list_game_files(steam_path, status_callback=None):
