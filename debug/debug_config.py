@@ -1,5 +1,7 @@
 import os
 import sys
+import logging
+from datetime import datetime
 
 def is_debug_mode():
     """
@@ -44,3 +46,34 @@ def is_debug_mode():
             pass
         
         return False
+
+def setup_logging(debug_mode=False):
+    """
+    Set up a centralized logging configuration.
+    
+    Args:
+        debug_mode (bool): Whether to enable debug-level logging
+    
+    Returns:
+        logging.Logger: Configured logger instance
+    """
+    # Create logs directory if it doesn't exist
+    logs_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+    os.makedirs(logs_dir, exist_ok=True)
+
+    # Generate log filename with timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_filename = os.path.join(logs_dir, f'ck3_mod_creator_{timestamp}.log')
+
+    # Configure logging
+    logging.basicConfig(
+        level=logging.DEBUG if debug_mode else logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_filename),
+            logging.StreamHandler()  # Also log to console
+        ]
+    )
+
+    logger = logging.getLogger('CK3ModCreator')
+    return logger

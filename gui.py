@@ -13,14 +13,13 @@ from src.ui.input_sections_ui import InputSectionsUI
 from src.ui.action_buttons_ui import ActionButtonsUI
 from src.core.game_utils import CK3GameUtils
 from src.core.mod_creator import ModCreator
-from debug.config import is_debug_mode
-from debug.logger import setup_logger
+from debug.debug_config import setup_logging, is_debug_mode
 
 
 class SteamModCreator:
     def __init__(self, root, debug):
         self.root = root
-        self.logger = setup_logger(debug)
+        self.logger = setup_logging(debug)
         self.debug = debug  # New debug flag
 
         # Initialize entry attributes before creating input sections
