@@ -72,36 +72,6 @@ class SteamModCreator:
             self.steam_path
         )
     
-    def validate_short_mod_name(self, short_mod_name):
-        # Load blocked names from JSON
-        with open(os.path.join(os.path.dirname(__file__), 'src/data/blocked_short_mod_names.json'), 'r') as file:
-            data = json.load(file)
-            BLOCKED_SHORT_MOD_NAMES = data['BLOCKED_SHORT_MOD_NAMES']
-
-        # Comprehensive validation checks
-        if not short_mod_name:
-            messagebox.showerror("Invalid Mod Name", "Short mod name cannot be empty.")
-            return False
-
-        if short_mod_name in BLOCKED_SHORT_MOD_NAMES:
-            messagebox.showerror("Invalid Mod Name", 
-                                f"The short mod name '{short_mod_name}' is already in use and cannot be used.")
-            return False
-
-        # Check for valid characters (lowercase, numbers, underscores)
-        if not re.match(r'^[a-z0-9_]+$', short_mod_name):
-            messagebox.showerror("Invalid Mod Name", 
-                                "Short mod name must contain only lowercase letters, numbers, and underscores.")
-            return False
-
-        # Length constraints
-        if len(short_mod_name) < 3 or len(short_mod_name) > 30:
-            messagebox.showerror("Invalid Mod Name", 
-                                "Short mod name must be between 3 and 30 characters long.")
-            return False
-
-        return True
-
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
         short_mod_name = self.short_mod_name_entry.get().strip() if self.short_mod_name_entry else ""
