@@ -16,6 +16,7 @@ from src.ui.action_buttons_ui import ActionButtonsUI
 from src.core.game_utils import CK3GameUtils
 from src.core.mod_creator import ModCreator
 from debug.debug_config import setup_logging, is_debug_mode, setup_exception_handling
+from src.core.config import ConfigManager
 
 @dataclasses.dataclass
 class ModCreationParams:
@@ -58,7 +59,10 @@ class SteamModCreator:
         self.logger.info(f"Initializing CK3ModCreator in {'DEBUG' if debug else 'PRODUCTION'} mode")
 
         self.root.title("CK3 Mod Creator")
-        self.root.geometry("1000x1000")
+        # Load window size from configuration
+        window_size = ConfigManager.get_config_value('window_size', (1000, 1000))
+        self.root.geometry(f"{window_size[0]}x{window_size[1]}")
+        #self.root.geometry("1000x1000")
         self.root.configure(bg='#f0f0f0')
 
         # Style configuration
@@ -177,6 +181,12 @@ class SteamModCreator:
 
         # Show success message
         messagebox.showinfo("Mod Created", f"Mod '{mod_name}' created successfully in {mod_creation_result['mod_folder_path']}")
+        # Add to recent mods
+        ConfigManager.add_recent_mod(short_mod_name)
+
+        # Optionally, show recent mods
+        recent_mods = ConfigManager.get_recent_mods()
+        self.logger.info(f"Recent mods: {recent_mods}")
 
     def update_status_label(self, message, is_error=False):
         """
@@ -203,6 +213,12 @@ class SteamModCreator:
             # Log any unexpected errors during status label update
             self.logger.error(f"Error updating status label: {e}")
 
+    def on_window_resize(self, event):
+        """
+        Save window size when resized.
+        """
+        ConfigManager.update_config('window_size', (event.width, event.height))
+
 
 def main():
     # Use ttkbootstrap for a modern look
@@ -211,7 +227,10 @@ def main():
      # Dynamically set debug mode
     debug_mode = is_debug_mode()
     app = SteamModCreator(root, debug=debug_mode)
+    # Bind window resize event
+    root.bind('<Configure>', app.on_window_resize)
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
