@@ -34,6 +34,7 @@ class SteamModCreator:
         self.mod_name_entry = None
         self.short_mod_name_entry = None
         self.supported_version_entry = None
+        self.version_info = None
         self.mod_tags_vars = {}
 
         # Log initialization
@@ -61,8 +62,8 @@ class SteamModCreator:
 
         #self.latest_version = CK3GameUtils.get_latest_ck3_version(self.steam_path)
         try:
-            version_info = CK3GameUtils.get_latest_ck3_version(self.steam_path)
-            self.latest_version = CK3GameUtils.get_version_for_files(version_info)
+            self.version_info = CK3GameUtils.get_latest_ck3_version(self.steam_path)
+            self.latest_version = CK3GameUtils.get_version_for_files(self.version_info)
         except Exception as e:
             self.logger.error(f"Could not detect game version: {e}")
             self.latest_version = "Unknown"
