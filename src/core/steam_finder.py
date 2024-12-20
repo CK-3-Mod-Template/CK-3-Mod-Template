@@ -3,11 +3,13 @@ import platform
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import winreg
+from src.core.config import ConfigManager
 
 class SteamPathFinder:
     """
     A utility class for finding Steam installation paths across different platforms.
     """
+
     @staticmethod
     def detect_steam_path(root=None):
         """
@@ -20,12 +22,25 @@ class SteamPathFinder:
             str: Path to the Steam installation.
         """
         try:
+            # First, check if there's a previously saved Steam path
+            saved_steam_path = ConfigManager.get_steam_path()
+            if saved_steam_path and os.path.exists(saved_steam_path):
+                return saved_steam_path
+
+            # If no saved path, try to detect
             steam_path = SteamPathFinder.find_steam_installation_path()
+            
+            # Save the detected path
+            ConfigManager.set_steam_path(steam_path)
             return steam_path
+
         except (FileNotFoundError, OSError) as e:
             # If automatic detection fails, prompt user
             if root:
                 steam_path = SteamPathFinder.prompt_steam_path(root)
+                
+                # Save the manually selected path
+                ConfigManager.set_steam_path(steam_path)
                 return steam_path
             raise
 
@@ -91,7 +106,13 @@ class SteamPathFinder:
         Raises:
             SystemExit: If no path is selected.
         """
-        steam_path = filedialog.askdirectory(title="Select Steam Installation Directory")
+        # Get Steam path history for potential user guidance
+        steam_path_history = ConfigManager.get_steam_path_history()
+        
+        steam_path = filedialog.askdirectory(
+            title="Select Steam Installation Directory", 
+            initialdir=steam_path_history[0] if steam_path_history else None
+        )
         
         if not steam_path:
             messagebox.showerror("Error", "Steam path is required to proceed.")
