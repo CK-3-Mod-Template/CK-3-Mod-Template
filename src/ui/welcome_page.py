@@ -160,6 +160,16 @@ class SetupWizard:
         )
         path_entry.pack(pady=(0, 10))
 
+        # Status label for user feedback
+        status_var = tk.StringVar()
+        status_label = tk.Label(
+            self.main_frame, 
+            textvariable=status_var, 
+            font=("Helvetica", 10),
+            fg="green"
+        )
+        status_label.pack(pady=(0, 10))
+
         # Path selection buttons
         button_frame = tk.Frame(self.main_frame)
         button_frame.pack(pady=(20, 0))
@@ -170,7 +180,12 @@ class SetupWizard:
             if detected_path:
                 self.steam_path = detected_path
                 path_var.set(detected_path)
+                status_var.set("✓ Detected Steam path selected")
+                # Briefly highlight the entry
+                path_entry.config(bg='light green')
+                path_entry.after(1500, lambda: path_entry.config(bg='white'))
             else:
+                status_var.set("✗ No detected path available")
                 messagebox.showerror("Error", "No detected path available")
 
         def choose_custom_path():
@@ -181,6 +196,12 @@ class SetupWizard:
                 detected_path = custom_path
                 path_var.set(custom_path)
                 self.steam_path = custom_path
+                status_var.set("✓ Custom Steam path selected")
+                # Briefly highlight the entry
+                path_entry.config(bg='light green')
+                path_entry.after(1500, lambda: path_entry.config(bg='white'))
+            else:
+                status_var.set("✗ No path selected")
 
         # Use Detected Path button (only if path exists)
         if detected_path:
@@ -302,10 +323,24 @@ class SetupWizard:
             )
             path_entry.pack(pady=(0, 10))
 
+            # Status label for user feedback
+            status_var = tk.StringVar()
+            status_label = tk.Label(
+                self.main_frame, 
+                textvariable=status_var, 
+                font=("Helvetica", 10),
+                fg="green"
+            )
+            status_label.pack(pady=(0, 10))
+
             def use_detected_directory():
                 """Use the detected mod directory"""
                 self.mod_directory = mod_dir
                 path_var.set(mod_dir)
+                status_var.set("✓ Detected mod directory selected")
+                # Briefly highlight the entry
+                path_entry.config(bg='light green')
+                path_entry.after(1500, lambda: path_entry.config(bg='white'))
 
             def choose_custom_directory():
                 """Open directory selection dialog"""
@@ -317,6 +352,12 @@ class SetupWizard:
                 if custom_dir:
                     path_var.set(custom_dir)
                     self.mod_directory = custom_dir
+                    status_var.set("✓ Custom mod directory selected")
+                    # Briefly highlight the entry
+                    path_entry.config(bg='light green')
+                    path_entry.after(1500, lambda: path_entry.config(bg='white'))
+                else:
+                    status_var.set("✗ No directory selected")
 
             # Buttons frame
             button_frame = tk.Frame(self.main_frame)
