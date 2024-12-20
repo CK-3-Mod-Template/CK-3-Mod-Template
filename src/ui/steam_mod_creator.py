@@ -23,7 +23,6 @@ from debug.debug_config import setup_logging, is_debug_mode, setup_exception_han
 from src.core.config import ConfigManager
 from src.core.mod_params import ModCreationParams
 from src.ui.welcome_page import show_welcome_page
-from src.ui.main_menu import MainMenu
 
 
 class SteamModCreator:
@@ -50,7 +49,8 @@ class SteamModCreator:
         self.root.configure(bg='#f0f0f0')
 
         # Style configuration
-        self.style = ttk.Style(theme='flatly')  # Modern, clean theme
+        # Use the parent's style if available, otherwise create a new style
+        self.style = self.root.style if hasattr(self.root, 'style') else ttk.Style(theme='flatly')
 
         # Create main container
         self.main_frame = ttk.Frame(self.root, padding="20 20 20 20")
