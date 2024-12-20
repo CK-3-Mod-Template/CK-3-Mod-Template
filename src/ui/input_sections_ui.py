@@ -87,6 +87,15 @@ class InputSectionsUI:
                 # Make version entry read-only to show it's auto-detected
                 parent_class.supported_version_entry.config(state='readonly')
 
+        # Function to handle version entry changes
+        def on_version_entry_change(event):
+            # When user starts editing, make entry editable and hide version name
+            parent_class.supported_version_entry.config(state='normal')
+            version_name_label.config(text="")
+
+        # Bind the change event
+        parent_class.supported_version_entry.bind('<FocusIn>', on_version_entry_change)
+
         # Tooltip for Supported Version
         ttk.Label(supported_version_frame, 
                 text="Automatically fetched latest version from launcher", 
