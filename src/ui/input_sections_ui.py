@@ -129,3 +129,27 @@ class InputSectionsUI:
         # Pre-fill the supported version entry
         if latest_version:
             parent_class.supported_version_entry.insert(0, latest_version)
+
+###Ideas:
+# Add a button to open the CK3 game folder
+# # Mod Author Input
+        # author_frame = ttk.Frame(main_frame)
+        # author_frame.pack(fill='x', pady=10)
+
+        # ttk.Label(author_frame, text="Mod Author:", font=('Helvetica', 10)).pack(anchor='w')
+        # parent_class.author_entry = ttk.Entry(author_frame, width=50)
+        # parent_class.author_entry.pack(fill='x', expand=True)
+        
+        # # Tooltip for Mod Author
+        # ttk.Label(author_frame, 
+        #           text="Enter the name of the mod author (e.g., 'Your Name')", 
+        #           font=('Helvetica', 8), 
+        #           foreground='gray').pack(anchor='w')
+
+        # # Mod Description Input
+        # description_frame = ttk.Frame(main_frame)
+        # description_frame.pack(fill='x', pady=10)
+
+        # ttk.Label(description_frame, text="Mod Description:", font=('Helvetica', 10)).pack(anchor='w')
+        # parent_class.description_entry = ttk.Entry(description_frame, width=50)
+        # parent_class.description_entry.pack(fill='x', expand=True)
