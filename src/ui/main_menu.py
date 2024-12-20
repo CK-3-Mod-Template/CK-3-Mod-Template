@@ -5,6 +5,8 @@ import os
 import sys
 import tkinter.messagebox as messagebox
 
+from src.ui.settings_window import SettingsWindow
+
 class MainMenu:
     def __init__(self, root,debug=False, steam_path=None):
         # Use ttkbootstrap's Window instead of standard Tk
@@ -75,7 +77,8 @@ class MainMenu:
 
     def open_settings(self):
         """Open application settings"""
-        messagebox.showinfo("Settings", "Settings functionality coming soon!")
+        SettingsWindow(self.root)
+        #messagebox.showinfo("Settings", "Settings functionality coming soon!")
 
     def open_modding_help(self):
         """Open modding help resources"""
