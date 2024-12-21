@@ -114,45 +114,73 @@ class SettingsWindow:
         if steam_path:
             self.steam_var.set(steam_path)
     
+
+
     def save_settings(self):
         """Save the current settings to configuration"""
         try:
             # Validate window size
-            width = self.width_var.get()
-            height = self.height_var.get()
+            try:
+                width = int(self.width_var.get())
+                height = int(self.height_var.get())
+            except (ValueError, TypeError):
+                # Fallback to default size if conversion fails
+                width, height = 1000, 1000
             
             if width < 300 or height < 300:
-                messagebox.showerror("Invalid Size", "Window size must be at least 300x300 pixels.")
-                return
+                width, height = 1000, 1000
             
-            # Update configuration
-            new_theme = self.theme_var.get()
-            self.config['theme'] = new_theme
-            self.config['log_level'] = self.log_var.get()
-            self.config['window_size'] = (width, height)
+            # Safely extract theme and log level
+            try:
+                theme = str(self.theme_var.get())
+            except Exception:
+                theme = 'flatly'
             
-            # Update Steam path if changed
-            steam_path = self.steam_var.get().strip()
+            try:
+                log_level = str(self.log_var.get())
+            except Exception:
+                log_level = 'INFO'
+            
+            # Safely extract Steam path
+            try:
+                steam_path = str(self.steam_var.get()).strip() or None
+            except Exception:
+                steam_path = None
+            
+            # Create a new configuration dictionary
+            new_config = ConfigManager.load_config()  # Load existing config first
+            
+            # Update only the specific keys we want to modify
+            new_config.update({
+                'theme': theme,
+                'log_level': log_level,
+                'window_size': (width, height),
+            })
+            
+            # Update Steam path if provided
             if steam_path:
-                self.config['current_steam_path'] = steam_path
-                # Optionally, update Steam path history
-                steam_path_history = self.config.get('steam_path_history', [])
+                new_config['current_steam_path'] = steam_path
+                # Update Steam path history
+                steam_path_history = new_config.get('steam_path_history', [])
                 if steam_path not in steam_path_history:
                     steam_path_history.insert(0, steam_path)
-                    self.config['steam_path_history'] = steam_path_history[:10]  # Keep last 10 paths
+                    new_config['steam_path_history'] = steam_path_history[:10]
             
             # Save to config file
-            ConfigManager.save_config(self.config)
+            ConfigManager.save_config(new_config)
             
             # Apply settings immediately if callback is provided
             if self.apply_callback:
-                self.apply_callback(new_theme)
+                self.apply_callback(theme)
             
             # Show confirmation and close window
             messagebox.showinfo("Settings", "Settings saved successfully.")
             self.settings_window.destroy()
         
         except Exception as e:
-            #messagebox.showerror("Error", f"Failed to save settings: {str(e)}")
-            self.settings_window.destroy()
-            pass
+            # Detailed error logging
+            print(f"Error saving settings: {e}")
+            import traceback
+            traceback.print_exc()  # Print full stack trace
+            messagebox.showerror("Error", f"Failed to save settings: {str(e)}")
+            self.settings_window.destroy()    
