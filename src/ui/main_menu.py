@@ -7,6 +7,7 @@ import tkinter.messagebox as messagebox
 
 from src.ui.settings_window import SettingsWindow
 from src.core.config import ConfigManager
+from src.version import get_version_label
 
 class MainMenu:
     def __init__(self, root, debug=False, steam_path=None):
@@ -61,10 +62,12 @@ class MainMenu:
             btn.pack(pady=10, padx=20)
 
         # Version label
+        version_text, version_color = get_version_label()
         version_label = ttk.Label(
             self.main_frame, 
-            text="Version 1.0.0", 
-            font=('Helvetica', 10)
+            text=version_text, 
+            font=('Helvetica', 10),
+            bootstyle=version_color  # Use ttkbootstrap's color styling
         )
         version_label.pack(side='bottom', pady=10)
 
