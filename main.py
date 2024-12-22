@@ -52,10 +52,24 @@ def configure_application_style(root: tk.Tk, theme: str = 'flatly') -> None:
 def main():
     # Set up global exception handling first
     setup_exception_handling()
+
+    # Load configuration
+    config = ConfigManager.load_config()
     
     # Initialize logging
     debug = is_debug_mode()
-    logger = setup_logging(debug)
+    logger = setup_logging(
+        debug_mode=debug, 
+        log_level=config.get('log_level', 'INFO')
+    )
+
+
+    # Test logging at different levels
+    # logger.critical("This is a CRITICAL level log message")
+    # logger.error("This is an ERROR level log message")
+    # logger.warning("This is a WARNING level log message")
+    # logger.info("This is an INFO level log message")
+    # logger.debug("This is a DEBUG level log message")
 
     logger.info(f"Initializing Main Menu in {'DEBUG' if debug else 'PRODUCTION'} mode")
     
@@ -63,8 +77,6 @@ def main():
     root = tk.Tk()
     root.title("CK3 Mod Creator")
     
-    # Load configuration
-    config = ConfigManager.load_config()
     
     # Configure application style
     configure_application_style(root, config.get('theme', 'flatly'))
