@@ -93,45 +93,6 @@ class MainMenu:
         from main import configure_application_style
         settings_window = SettingsWindow(self.root, apply_callback=lambda theme: configure_application_style(self.root, theme))
 
-    def apply_theme(self, theme):
-        """
-        Apply theme changes dynamically with error handling
-        
-        Args:
-            theme (str): Theme to apply ('flatly' or 'dark')
-        """
-        try:
-            # Validate theme input
-            valid_themes = ['flatly', 'dark']
-            if theme not in valid_themes:
-                theme = 'flatly'  # Default to flatly if invalid theme
-            
-            # Use the correct theme name for ttkbootstrap
-            style_theme = 'darkly' if theme == 'dark' else 'flatly'
-            
-            # Temporarily disable theme change if window is being destroyed
-            if not self.root.winfo_exists():
-                return
-            
-            # Apply theme with additional error handling
-            try:
-                style = ttk.Style()
-                style.theme_use(style_theme)
-            except Exception as e:
-                print(f"Error applying theme: {e}")
-                # Fallback to default theme if application fails
-                style.theme_use('flatly')
-            
-            # Update configuration
-            config = ConfigManager.load_config()
-            config['theme'] = theme
-            ConfigManager.save_config(config)
-        
-        except Exception as e:
-            print(f"Unexpected error in apply_theme: {e}")
-            import traceback
-            traceback.print_exc()
-
     def open_modding_help(self):
         """Open modding help resources"""
         webbrowser.open("https://ck3.paradoxwikis.com/Modding")
