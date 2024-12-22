@@ -182,5 +182,5 @@ class SettingsWindow:
             print(f"Error saving settings: {e}")
             import traceback
             traceback.print_exc()  # Print full stack trace
-            messagebox.showerror("Error", f"Failed to save settings: {str(e)}")
+            #messagebox.showerror("Error", f"Failed to save settings: {str(e)}")
             self.settings_window.destroy()    
