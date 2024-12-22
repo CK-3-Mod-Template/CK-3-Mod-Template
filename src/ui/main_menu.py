@@ -90,7 +90,8 @@ class MainMenu:
 
     def open_settings(self):
         """Open application settings with theme change support"""
-        SettingsWindow(self.root, apply_callback=self.apply_theme)
+        from main import configure_application_style
+        settings_window = SettingsWindow(self.root, apply_callback=lambda theme: configure_application_style(self.root, theme))
 
     def apply_theme(self, theme):
         """
