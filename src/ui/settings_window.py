@@ -33,8 +33,19 @@ class SettingsWindow:
         theme_label = ttk.Label(settings_frame, text="Application Theme:", font=('Helvetica', 12))
         theme_label.pack(anchor='w', pady=(0, 5))
         
-        self.theme_var = tk.StringVar(value=self.config.get('theme', 'flatly'))
-        theme_options = ['light', 'dark']
+        # Map display names to backend theme names
+        self.theme_map = {
+            'light': 'flatly',
+            'dark': 'dark'
+        }
+        self.reverse_theme_map = {v: k for k, v in self.theme_map.items()}
+        
+        # Get the display name for the current theme
+        current_theme = self.config.get('theme', 'flatly')
+        current_display_theme = self.reverse_theme_map.get(current_theme, 'light')
+        
+        self.theme_var = tk.StringVar(value=current_display_theme)
+        theme_options = list(self.theme_map.keys())
         theme_dropdown = ttk.Combobox(
             settings_frame, 
             textvariable=self.theme_var, 
@@ -131,11 +142,12 @@ class SettingsWindow:
                 width, height = 1000, 1000
             
             # Safely extract theme and log level
+            # In save_settings method, convert display name back to backend theme
             try:
-                theme = str(self.theme_var.get())
+                theme = self.theme_map.get(str(self.theme_var.get()))
             except Exception:
                 theme = 'flatly'
-            
+
             try:
                 log_level = str(self.log_var.get())
             except Exception:
