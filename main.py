@@ -12,42 +12,8 @@ from src.ui.main_menu import MainMenu
 from debug.debug_config import setup_logging, is_debug_mode, setup_exception_handling
 from src.core.config import ConfigManager
 from src.ui.welcome_page import show_welcome_page
+from src.ui.styles import configure_application_style
 
-def configure_application_style(root: tk.Tk, theme: str = 'flatly') -> None:
-    """
-    Configure the application's global style and theme.
-    
-    Args:
-        root (tk.Tk): The main application window
-        theme (str, optional): The theme to apply. Defaults to 'flatly'.
-    """
-    # Set global background color and font
-    if theme == 'dark':
-        # Dark theme configuration
-        bg_color = '#2c2c2c'
-        fg_color = '#ffffff'
-        
-        # Configure root window
-        root.configure(bg=bg_color)
-        
-        # Configure global styles for ttkbootstrap
-        style = ttk.Style()
-        style.theme_use('darkly')  # Use a dark theme from ttkbootstrap
-    else:
-        # Light theme configuration (default)
-        bg_color = '#f0f0f0'  # Light gray background
-        fg_color = '#000000'
-        
-        # Configure root window
-        root.configure(bg=bg_color)
-        
-        # Configure global styles for ttkbootstrap
-        style = ttk.Style()
-        style.theme_use('flatly')  # Use a light theme from ttkbootstrap
-    
-    # Set global font
-    font_style = ('Segoe UI', 10)  # Modern, clean font
-    root.option_add('*Font', font_style)
 
 def main():
     # Set up global exception handling first
