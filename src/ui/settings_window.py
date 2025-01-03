@@ -34,7 +34,7 @@ class SettingsWindow:
         theme_label.pack(anchor='w', pady=(0, 5))
         
         self.theme_var = tk.StringVar(value=self.config.get('theme', 'flatly'))
-        theme_options = ['flatly', 'dark']
+        theme_options = ['light', 'dark']
         theme_dropdown = ttk.Combobox(
             settings_frame, 
             textvariable=self.theme_var, 
