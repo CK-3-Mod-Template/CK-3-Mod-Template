@@ -4,6 +4,7 @@ from tkinter import messagebox, ttk
 from src.core.steam_finder import SteamPathFinder
 from src.core.config import ConfigManager
 from src.core.game_utils import CK3GameUtils
+from src.version import get_version_label
 
 class SetupWizard:
     def __init__(self, root):
@@ -53,6 +54,16 @@ class SetupWizard:
         self.setup_dialog.geometry("600x400")
         self.setup_dialog.protocol("WM_DELETE_WINDOW", self._on_close)
         self.setup_dialog.grab_set()
+
+        # Add version label at the top of the setup dialog
+        version_text, version_color = get_version_label()
+        version_label = ttk.Label(
+            self.setup_dialog, 
+            text=version_text, 
+            font=('Helvetica', 10),
+            bootstyle=version_color
+        )
+        version_label.pack(side='top', pady=(10, 0))
 
         # Create main frame
         self.main_frame = tk.Frame(self.setup_dialog)

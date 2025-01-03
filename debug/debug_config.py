@@ -22,7 +22,7 @@ def global_exception_handler(exc_type, exc_value, exc_traceback):
     error_msg = "Uncaught exception:\n" + "".join(
         traceback.format_exception(exc_type, exc_value, exc_traceback)
     )
-    logger.error(error_msg)
+    logger.critical(error_msg)
     
 
     # Optionally show a user-friendly error dialog
@@ -91,12 +91,13 @@ def is_debug_mode():
         
         return False
 
-def setup_logging(debug_mode=False):
+def setup_logging(debug_mode=False, log_level: str = 'INFO'):
     """
     Set up a centralized logging configuration.
     
     Args:
         debug_mode (bool): Whether to enable debug-level logging
+        log_level (str): Logging level from configuration
     
     Returns:
         logging.Logger: Configured logger instance
@@ -109,9 +110,25 @@ def setup_logging(debug_mode=False):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_filename = os.path.join(logs_dir, f'ck3_mod_creator_{timestamp}.log')
 
+    # Map log level string to logging constant
+    log_level_map = {
+        'DEBUG': logging.DEBUG,
+        'INFO': logging.INFO,
+        'WARNING': logging.WARNING,
+        'ERROR': logging.ERROR,
+        'CRITICAL': logging.CRITICAL
+    }
+
+    # Determine the actual logging level
+    actual_level = log_level_map.get(log_level.upper(), logging.INFO)
+    
+    # Override with debug mode if set
+    if debug_mode:
+        actual_level = logging.DEBUG
+
     # Configure logging
     logging.basicConfig(
-        level=logging.DEBUG if debug_mode else logging.INFO,
+        level=actual_level,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
             logging.FileHandler(log_filename),

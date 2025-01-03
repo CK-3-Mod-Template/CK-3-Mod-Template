@@ -5,9 +5,13 @@ from tkinter import messagebox, filedialog, ttk
 import ttkbootstrap as ttk  # Modern themed Tkinter
 import webbrowser
 import json
-import re
+import re, sys
 from typing import List, Optional, Dict, Any
 import dataclasses
+import logging
+# Add the project root to the Python path
+project_root = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, project_root)
 from src.core.steam_finder import SteamPathFinder as SteamPF
 from src.ui.steam_path_ui import SteamPathUI
 from src.ui.header_ui import HeaderUI
@@ -22,13 +26,10 @@ from src.ui.welcome_page import show_welcome_page
 
 
 class SteamModCreator:
-    def __init__(self, root, debug,steam_path=None):
+    def __init__(self, root, debug=False,steam_path=None):
         self.root = root
-        self.logger = setup_logging(debug)
-        self.debug = debug  # New debug flag
-
-        # Set up global exception handling first
-        setup_exception_handling()
+        self.logger = logging.getLogger('CK3ModCreator')
+        self.debug = debug
 
         # Initialize entry attributes before creating input sections
         self.mod_name_entry = None
@@ -48,7 +49,8 @@ class SteamModCreator:
         self.root.configure(bg='#f0f0f0')
 
         # Style configuration
-        self.style = ttk.Style(theme='flatly')  # Modern, clean theme
+        # Use the parent's style if available, otherwise create a new style
+        self.style = self.root.style if hasattr(self.root, 'style') else ttk.Style(theme='flatly')
 
         # Create main container
         self.main_frame = ttk.Frame(self.root, padding="20 20 20 20")
@@ -181,33 +183,32 @@ class SteamModCreator:
         ConfigManager.update_config('window_size', (event.width, event.height))
 
 
-def main():
-    # Use ttkbootstrap for a modern look
-    root = ttk.Window(themename="flatly")
-    root.withdraw()  # Hide the main window initially
+# def main():
+#     # Use ttkbootstrap for a modern look
+#     root = ttk.Window(themename="flatly")
+#     root.withdraw()  # Hide the main window initially
 
-    # Check if it's first startup
-    if ConfigManager.is_first_startup():
-        # Show only the welcome page
-        steam_path = show_welcome_page(root)
+#     # Check if it's first startup
+#     if ConfigManager.is_first_startup():
+#         # Show only the welcome page
+#         steam_path = show_welcome_page(root)
         
-        # If no path selected, exit the application
-        if steam_path is None:
-            root.quit()
-            return
-    else:
-        # Not first startup, get saved Steam path
-        steam_path = ConfigManager.get_steam_path()
+#         # If no path selected, exit the application
+#         if steam_path is None:
+#             root.quit()
+#             return
+#     else:
+#         # Not first startup, get saved Steam path
+#         steam_path = ConfigManager.get_steam_path()
 
-     # Dynamically set debug mode
-    debug_mode = is_debug_mode()
-    app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
-    # Show the main window
-    root.deiconify()
-    # Bind window resize event
-    root.bind('<Configure>', app.on_window_resize)
-    root.mainloop()
+#      # Dynamically set debug mode
+#     debug_mode = is_debug_mode()
+#     app = SteamModCreator(root, debug=debug_mode, steam_path=steam_path)
+#     # Show the main window
+#     root.deiconify()
+#     # Bind window resize event
+#     root.bind('<Configure>', app.on_window_resize)
+#     root.mainloop()
 
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

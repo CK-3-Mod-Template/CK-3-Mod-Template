@@ -1,8 +1,8 @@
 {
-    "theme": "flatly",
+    "theme": "dark",
     "window_size": [
-        1000,
-        1000
+        600,
+        700
     ],
     "log_level": "INFO",
     "recent_mods": [],
