@@ -104,12 +104,6 @@ def main():
     # Launch main menu
     app = MainMenu(root, debug, steam_path)
     
-    # Add window resize event to save window size
-    # def on_window_resize(event):
-    #     ConfigManager.update_config('window_size', (event.width, event.height))
-    
-    #root.bind('<Configure>', on_window_resize)
-    
     root.mainloop()
 
 if __name__ == "__main__":
