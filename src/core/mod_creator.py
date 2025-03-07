@@ -26,11 +26,11 @@ class ModCreator:
             os.makedirs(documents_path, exist_ok=True)
 
             # Create mod folder
-            mod_folder_path = os.path.join(documents_path, short_mod_name)
+            mod_folder_path = os.path.join(documents_path, mod_name)
             os.makedirs(mod_folder_path, exist_ok=True)
 
             # Create .mod file
-            mod_file_path = os.path.join(documents_path, f"{short_mod_name}.mod")
+            mod_file_path = os.path.join(documents_path, f"{mod_name}.mod")
             mod_file_content = _generate_mod_file_content(
                 mod_name, selected_tags, supported_version, mod_folder_path
             )
