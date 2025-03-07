@@ -33,7 +33,7 @@ class SteamModCreator:
 
         # Initialize entry attributes before creating input sections
         self.mod_name_entry = None
-        self.short_mod_name_entry = None
+        self.abbreviation_entry = None
         self.supported_version_entry = None
         self.version_info = None
         self.mod_tags_vars = {}
@@ -80,10 +80,14 @@ class SteamModCreator:
     
     def create_mod(self):
         mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
-        short_mod_name = self.short_mod_name_entry.get().strip() if self.short_mod_name_entry else ""
+        abbreviation = self.abbreviation_entry.get().strip() if self.abbreviation_entry else ""
 
-        if not mod_name or not short_mod_name:
-            messagebox.showerror("Error", "Please enter both Mod Name and Short Mod Name")
+        # Check for too long mod name
+        if len(mod_name) > 30:
+            messagebox.showwarning("Warning", "Your mod name is quite long (over 30 characters). While this won't prevent mod creation, consider using a shorter name for better compatibility.")
+
+        if not mod_name or not abbreviation:
+            messagebox.showerror("Error", "Please enter both Mod Name and Abbreviation")
             return
 
         # Collect selected tags
@@ -99,7 +103,7 @@ class SteamModCreator:
             # Use ModCreationParams for validation
             mod_params = ModCreationParams(
                 mod_name=mod_name,
-                short_mod_name=short_mod_name,
+                abbreviation=abbreviation,
                 tags=selected_tags,
                 supported_version=supported_version
             )
@@ -107,7 +111,7 @@ class SteamModCreator:
             # Create mod structure
             mod_creation_result = ModCreator.create_mod_structure(
                 mod_params.mod_name, 
-                mod_params.short_mod_name, 
+                mod_params.abbreviation, 
                 mod_params.tags, 
                 mod_params.supported_version, 
                 self.debug,
@@ -127,7 +131,7 @@ class SteamModCreator:
                 essentials_copy_result = ModCreator.copy_and_replace(
                     essentials_source, 
                     mod_creation_result['mod_folder_path'], 
-                    mod_params.short_mod_name, 
+                    mod_params.abbreviation, 
                     mod_params.mod_name,
                     status_callback=self.update_status_label
                 )
@@ -140,7 +144,7 @@ class SteamModCreator:
             messagebox.showinfo("Mod Created", f"Mod '{mod_name}' created successfully in {mod_creation_result['mod_folder_path']}")
             
             # Add to recent mods
-            ConfigManager.add_recent_mod(short_mod_name)
+            ConfigManager.add_recent_mod(abbreviation)
 
             # Optionally, show recent mods
             recent_mods = ConfigManager.get_recent_mods()

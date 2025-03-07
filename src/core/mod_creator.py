@@ -3,13 +3,13 @@ import platform
 
 class ModCreator:
     @staticmethod
-    def create_mod_structure(mod_name, short_mod_name, selected_tags, supported_version, debug=False, status_callback=None):
+    def create_mod_structure(mod_name, abbreviation, selected_tags, supported_version, debug=False, status_callback=None):
         """
         Create the basic mod structure and files.
         
         Args:
             mod_name (str): Full name of the mod
-            short_mod_name (str): Short identifier for the mod
+            abbreviation (str): Short identifier for the mod
             selected_tags (list): List of mod tags
             supported_version (str): Game version supported by the mod
             debug (bool, optional): Whether to use debug output path. Defaults to False.
@@ -73,28 +73,28 @@ class ModCreator:
             }
 
     @staticmethod
-    def copy_and_replace(src, dst, short_mod_name, mod_name, status_callback=None):
+    def copy_and_replace(src, dst, abbreviation, mod_name, status_callback=None):
         """
             Recursively copy files and replace placeholders.
             
             Args:
             src (str): Source directory path
             dst (str): Destination directory path
-            short_mod_name (str): Short mod name to replace placeholders
+            abbreviation (str): Short mod name to replace placeholders
             mod_name (str): Full mod name to replace placeholders
             status_callback (callable, optional): Function to report status
         
         Returns:
             dict: Result of the copy operation
         """
-        def _copy_and_replace_internal(src, dst, short_mod_name, mod_name):
+        def _copy_and_replace_internal(src, dst, abbreviation, mod_name):
             """
             Internal recursive function to copy and replace files.
             
             Args:
                 src (str): Source directory path
                 dst (str): Destination directory path
-                short_mod_name (str): Short mod name to replace placeholders
+                abbreviation (str): Short mod name to replace placeholders
                 mod_name (str): Full mod name to replace placeholders
             """
             # Ensure destination directory exists
@@ -105,20 +105,20 @@ class ModCreator:
                 s = os.path.join(src, item)
                 
                 # Replace placeholders in the destination path
-                replaced_item = (item.replace('your_mod_name_here', short_mod_name)
+                replaced_item = (item.replace('your_mod_name_here', abbreviation)
                                 .replace('your_long_mod_name_here', mod_name))
                 d = os.path.join(dst, replaced_item)
                 
                 if os.path.isdir(s):
                     # Recursively copy subdirectories
-                    _copy_and_replace_internal(s, d, short_mod_name, mod_name)
+                    _copy_and_replace_internal(s, d, abbreviation, mod_name)
                 else:
                     # Copy and replace placeholders for files
                     with open(s, 'r', encoding='utf-8') as source_file:
                         content = source_file.read()
                     
                     # Replace placeholders in file content
-                    content = (content.replace('<your_mod_name_here>', short_mod_name)
+                    content = (content.replace('<your_mod_name_here>', abbreviation)
                                     .replace('<your_long_mod_name_here>', mod_name))
                     
                     # Write to destination
@@ -127,7 +127,7 @@ class ModCreator:
 
         try:
             # Perform the recursive copy
-            _copy_and_replace_internal(src, dst, short_mod_name, mod_name)
+            _copy_and_replace_internal(src, dst, abbreviation, mod_name)
             
             # Optional status callback (called only once)
             if status_callback:

@@ -27,17 +27,21 @@ class InputSectionsUI:
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
-        # Short Mod Name Input
-        short_mod_name_frame = ttk.Frame(main_frame)
-        short_mod_name_frame.pack(fill='x', pady=10)
+        # Abbreviation Input
+        abbreviation_frame = ttk.Frame(main_frame)
+        abbreviation_frame.pack(fill='x', pady=10)
 
-        ttk.Label(short_mod_name_frame, text="Short Mod Name:", font=('Helvetica', 10)).pack(anchor='w')
-        parent_class.short_mod_name_entry = ttk.Entry(short_mod_name_frame, width=30)
-        parent_class.short_mod_name_entry.pack(fill='x', expand=True)
+        ttk.Label(abbreviation_frame, text="Abbreviation:", font=('Helvetica', 10)).pack(anchor='w')
+        parent_class.abbreviation_entry = ttk.Entry(abbreviation_frame, width=30)
+        parent_class.abbreviation_entry.pack(fill='x', expand=True)
         
-        # Tooltip for Short Mod Name
-        ttk.Label(short_mod_name_frame, 
-                  text="Enter a short, unique identifier for your mod (e.g., 'mrfp')", 
+        # Tooltip for Abbreviation
+        ttk.Label(abbreviation_frame, 
+                  text="Enter a short, unique identifier for your mod (3-6 characters)\n" +
+                       "- Must contain only letters and digits\n" +
+                       "- Should be easy to type frequently\n" +
+                       "- Will be used in file names\n" +
+                       "- Example: 'mrfp' for 'Mass Recruit from Prison'", 
                   font=('Helvetica', 8), 
                   foreground='gray').pack(anchor='w')
 
