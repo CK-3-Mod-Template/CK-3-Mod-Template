@@ -36,7 +36,7 @@ class ModCreationParams:
         if not self.short_mod_name:
             raise ValueError("Short mod name cannot be empty")
 
-        if self.short_mod_name in BLOCKED_SHORT_MOD_NAMES:
+        if self.short_mod_name.lower() in [name.lower() for name in BLOCKED_SHORT_MOD_NAMES]:
             raise ValueError(f"The short mod name '{self.short_mod_name}' is already in use and cannot be used")
 
         # Check for valid characters (lowercase, numbers, underscores)
