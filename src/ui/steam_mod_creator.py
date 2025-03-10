@@ -82,6 +82,11 @@ class SteamModCreator:
         mod_name = self.mod_name_entry.get().strip() if self.mod_name_entry else ""
         short_mod_name = self.short_mod_name_entry.get().strip() if self.short_mod_name_entry else ""
 
+        # Check for too short mod name
+        if len(mod_name) < 3:
+            messagebox.showwarning("Warning", "Name must be at least 3 symbols long.")
+            return
+
         # Check for too long mod name
         if len(mod_name) > 30:
             messagebox.showwarning("Warning", "Your mod name is quite long (over 30 characters). While this won't prevent mod creation, consider using a shorter name for better compatibility.")
