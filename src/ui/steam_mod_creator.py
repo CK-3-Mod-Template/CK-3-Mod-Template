@@ -84,7 +84,7 @@ class SteamModCreator:
 
         # Check for too short mod name
         if len(mod_name) < 3:
-            messagebox.showwarning("Warning", "Name must be at least 3 symbols long.")
+            messagebox.showerror("Error", "Name must be at least 3 symbols long.")
             return
 
         # Check for too long mod name
